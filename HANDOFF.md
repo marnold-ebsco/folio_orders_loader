@@ -27,10 +27,10 @@ Venv: `.venv/bin/python`.
   `README.md`. Spike scripts are in `spike/`.
 - `mapping.py`: `template()`, `load_map`, `check_map`, `read_rows`, `map_row`, `map_file`.
   Source precedence per field: legacy_field, fallback_legacy_field, value, fallback_value;
-  then `translate` (exact, then case-insensitive; unmatched passes through with a warning).
+  then `translate` (exact, then case-insensitive; an unmatched value is an ERROR, see Next item 2).
   Coerces cost ($ and commas) and booleans; assembles `product_ids[n].type/value`.
   Reader settings in map header `reader` (default tab, utf-8-sig).
-  Also `rules` and `date_format` (see Next item 2); misses/bad dates are errors.
+  Also `rules` and `date_format` (Next item 2).
 - 26 pytest tests pass; flake8 clean (`--max-line-length=100`).
 - `rules`/`date_format` are documented in README.md; `template()` hints `date_format` on date fields.
 
@@ -75,8 +75,12 @@ Venv: `.venv/bin/python`.
    workbooks (order numbers prefixed ZT): 140/140 dry-run OK. NOT yet run live. Gaps vs Data Import
    route: builder ignores PO line description, receipt status, account fields; pyproject version is
    0.1.0.dev0 though tagged v0.1.0.
-5. Create the GitHub remote and push main + tag, then the EBSCONET adapter in folio_ebsconet_orders
+5. (Do first) Set pyproject version to 0.1.0 to match the tag. Create the GitHub remote and push main + tag, then the EBSCONET adapter in folio_ebsconet_orders
    (depends on this repo by git tag; maps its rows to the records.py neutral format).
+
+## Suggested order for the next session
+Set version + push (item 5), run the adapter live on bugfest (5a) after a dry run, then the
+remaining open checks in item 3 (builder gaps: description, receipt status, account fields).
 
 ## Working notes
 - Keep sessions short and single-purpose; start a fresh one for each Next item using this file.
