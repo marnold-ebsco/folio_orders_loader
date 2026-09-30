@@ -82,7 +82,7 @@ Venv: `.venv/bin/python`.
 - Verified item 2 code is committed (in 43d13d5); handoff was accurate.
 - Ran validate --ini sunflower_bugfest.ini, dry run, then LIVE load of 2 POs (ZTLD001/2) with a
   scratch map/data in /tmp/t, then deleted them. All OK. The delete CSV needs columns
-   (e.g. ), not po_number.
+  `type,number` (e.g. `PO,ZTLD001`), not po_number.
 
 ## Suggested order for the next session
 Set version + push (item 5), run the adapter live on bugfest (5a) after a dry run, then the
