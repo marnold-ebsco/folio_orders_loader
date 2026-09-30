@@ -67,8 +67,10 @@ Venv: `.venv/bin/python`.
    (up to 500 chars, multi-line) - consider trimming to the message.
    Remaining open checks: over-budget/encumbrance errors, ISSN + title number, receipt status,
    account fields (these three are not in builder.py yet), throughput on a larger file.
-4. Commit: git init, tag v0.1.0, then the EBSCONET adapter in folio_ebsconet_orders (depends on
-   this repo by git tag; maps its rows to the records.py neutral format).
+4. Commit: DONE locally (2026-09-30): git init (branch main), commit 43d13d5, tag v0.1.0. NOT pushed:
+   GitHub remote `marnold-ebsco/folio_orders_loader` not created/added yet.
+5. Create the GitHub remote and push main + tag, then the EBSCONET adapter in folio_ebsconet_orders
+   (depends on this repo by git tag; maps its rows to the records.py neutral format).
 
 ## Working notes
 - Keep sessions short and single-purpose; start a fresh one for each Next item using this file.
