@@ -4,6 +4,8 @@ from collections import OrderedDict
 
 PO_NUMBER_RE = re.compile(r"^[a-zA-Z0-9]{1,22}$")
 FORMATS = ("Electronic Resource", "Physical Resource", "P/E Mix")
+RECEIPT_STATUSES = ("Pending", "Awaiting Receipt", "Partially Received",
+                    "Fully Received", "Receipt Not Required", "Ongoing", "Cancelled")
 ORDER_TYPES = ("Ongoing", "One-Time")
 
 REQUIRED = ("po_number", "vendor_code", "title", "order_format", "cost",
@@ -28,6 +30,8 @@ def validate_line(line):
         problems.append(f"order_format {line['order_format']!r} not in {FORMATS}")
     if line.get("order_type") and line["order_type"] not in ORDER_TYPES:
         problems.append(f"order_type {line['order_type']!r} not in {ORDER_TYPES}")
+    if line.get("receipt_status") and line["receipt_status"] not in RECEIPT_STATUSES:
+        problems.append(f"receipt_status {line['receipt_status']!r} not in {RECEIPT_STATUSES}")
     fmt = line.get("order_format")
     if fmt in ("Physical Resource", "P/E Mix") and not line.get("material_type"):
         problems.append("material_type required for physical lines")

@@ -88,9 +88,11 @@ Venv: `.venv/bin/python`.
   `type,number` (e.g. `PO,ZTLD001`), not po_number.
 
 ## Suggested order for the next session
-Builder gaps (PO line description, receipt status, account fields), then remaining open checks
-in item 3 (over-budget/encumbrance errors, ISSN + title number). Tag a new loader version
-(v0.2.0) when the builder changes and bump the EBSCOnet pin.
+Builder gaps DONE (2026-09-30): description (poLineDescription), receipt_status, vendor_account
+(vendorDetail.vendorAccount), verified live on bugfest (test PO deleted); 28 tests pass. Adapter now
+passes description + per-route receipt_status (uncommitted in EBSCOnet); it has no source column for
+vendor_account. Committed locally as loader 0.2.0, NOT tagged/pushed; then bump the EBSCOnet pin.
+Remaining open checks in item 3: over-budget/encumbrance errors, ISSN + title number.
 
 ## Working notes
 - Keep sessions short and single-purpose; start a fresh one for each Next item using this file.

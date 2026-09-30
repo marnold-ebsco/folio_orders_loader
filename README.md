@@ -54,6 +54,11 @@ true/yes/y/1. `product_ids[n].type` / `.value` build the line's product ID list.
 A `translate` miss or an unparseable date is an **error**: `validate` fails and `load`
 refuses to run until it is fixed.
 
+Optional line fields `description` (PO line description), `receipt_status` (one of
+Pending, Awaiting Receipt, Partially Received, Fully Received, Receipt Not Required, Ongoing,
+Cancelled; anything else is an error) and `vendor_account` (vendorDetail.vendorAccount) are
+written when present.
+
 `date_format` (date fields only: `renewal_date`, `subscription_from`, `subscription_to`) is a
 Python strptime pattern that converts the source value to ISO `YYYY-MM-DD`, e.g.
 `{"folio_field": "subscription_to", "legacy_field": "End", "date_format": "%m/%d/%Y"}`.

@@ -42,6 +42,15 @@ def build_line(line, r):
         out["details"] = details
     if line.get("publisher"):
         out["publisher"] = line["publisher"]
+    if line.get("description"):
+        out["poLineDescription"] = line["description"]
+    if line.get("receipt_status"):
+        out["receiptStatus"] = line["receipt_status"]
+    vendor_detail = {}
+    if line.get("vendor_account"):
+        vendor_detail["vendorAccount"] = line["vendor_account"]
+    if vendor_detail:
+        out["vendorDetail"] = vendor_detail
     if electronic:
         out["eresource"] = {
             "createInventory": "None", "activated": False,

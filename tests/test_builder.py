@@ -104,3 +104,20 @@ def test_invalid_po_not_posted():
     client = FakeClient()
     res = load(client, [line(po_number="BAD-1")], live=True)
     assert res[0][1] == "invalid" and not client.posted
+
+
+def test_description_receipt_status_and_vendor_account():
+    from folio_orders_loader.lookups import Resolver
+    extra = {"description": "Monthly", "receipt_status": "Receipt Not Required",
+             "vendor_account": "12345"}
+    pol = build_order("P1", [line(**extra)], Resolver(FakeClient()))["compositePoLines"][0]
+    assert pol["poLineDescription"] == "Monthly"
+    assert pol["receiptStatus"] == "Receipt Not Required"
+    assert pol["vendorDetail"] == {"vendorAccount": "12345"}
+    bare = build_order("P1", [line()], Resolver(FakeClient()))["compositePoLines"][0]
+    assert not {"poLineDescription", "receiptStatus", "vendorDetail"} & set(bare)
+
+
+def test_bad_receipt_status_rejected():
+    from folio_orders_loader.records import validate_line
+    assert any("receipt_status" in p for p in validate_line(line(receipt_status="Done")))
