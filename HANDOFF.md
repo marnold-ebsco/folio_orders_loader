@@ -78,8 +78,7 @@ Venv: `.venv/bin/python`.
    Gaps vs Data Import route: builder ignores PO line description, receipt status, account fields.
 5. DONE locally: pyproject version 0.1.0 (commit e950d7c), tag v0.1.0 moved to it (unpushed, so safe).
    PUSHED (2026-09-30): https://github.com/marnold-ebsco/folio_orders_loader (main + v0.1.0).
-   Adapter committed in EBSCOnet (41810a9) and requirements.txt pins the loader @v0.1.0 (next commit).
-   EBSCOnet itself has no push done in this session.
+   Adapter committed and pushed in EBSCOnet; pin is now @v0.2.0 (see below).
 
 ## Session log (2026-09-30, late)
 - Verified item 2 code is committed (in 43d13d5); handoff was accurate.
@@ -89,10 +88,11 @@ Venv: `.venv/bin/python`.
 
 ## Suggested order for the next session
 Builder gaps DONE (2026-09-30): description (poLineDescription), receipt_status, vendor_account
-(vendorDetail.vendorAccount), verified live on bugfest (test PO deleted); 28 tests pass. Adapter now
-passes description + per-route receipt_status (uncommitted in EBSCOnet); it has no source column for
-vendor_account. Committed locally as loader 0.2.0, NOT tagged/pushed; then bump the EBSCOnet pin.
-Remaining open checks in item 3: over-budget/encumbrance errors, ISSN + title number.
+(vendorDetail.vendorAccount), verified live on bugfest (test PO deleted); 28 tests pass.
+Loader v0.2.0 tagged and pushed. EBSCOnet adapter passes description + per-route receipt_status,
+requirements.txt pins the loader @v0.2.0, pushed (4fc1a9d). The adapter has no source column for
+vendor_account. Not yet re-run live with the new fields.
+Remaining open checks (item 3): over-budget/encumbrance errors, ISSN + title number.
 
 ## Working notes
 - Keep sessions short and single-purpose; start a fresh one for each Next item using this file.
