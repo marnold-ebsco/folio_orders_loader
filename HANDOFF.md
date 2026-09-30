@@ -71,12 +71,16 @@ Venv: `.venv/bin/python`.
    GitHub remote `marnold-ebsco/folio_orders_loader` not created/added yet.
 5a. EBSCONET adapter written locally (uncommitted, in ~/scratch/EBSCOnet): pipeline/folio_orders_adapter.py
    (prep workbooks -> neutral records -> folio_orders_loader.load; run `python -m pipeline.folio_orders_adapter --in-dir DIR --ini INI [--live]`) + tests/test_orders_adapter.py (3 pass, flake8 clean). The loader is
-   pip-installed editable into EBSCOnet/.venv (not in requirements.txt yet). Dry run on the three_type_test
-   workbooks (order numbers prefixed ZT): 140/140 dry-run OK. NOT yet run live. Gaps vs Data Import
-   route: builder ignores PO line description, receipt status, account fields; pyproject version is
-   0.1.0.dev0 though tagged v0.1.0.
-5. (Do first) Set pyproject version to 0.1.0 to match the tag. Create the GitHub remote and push main + tag, then the EBSCONET adapter in folio_ebsconet_orders
-   (depends on this repo by git tag; maps its rows to the records.py neutral format).
+   pip-installed editable into EBSCOnet/.venv (not in requirements.txt yet). LIVE RUN DONE (2026-09-30, bugfest):
+   three_type_test workbooks, 140/140 POs created, 0 errors, ~2 min (~0.9 s/PO). Order numbers were NOT
+   ZT-prefixed (real-looking, e.g. M2822798). Not spot-checked in the FOLIO UI. All 140 then deleted with
+   JSON backups (kept in ~/scratch/ebsconet_bugfest_backup_2026-09-30, outside the repo).
+   Gaps vs Data Import route: builder ignores PO line description, receipt status, account fields.
+5. DONE locally: pyproject version 0.1.0 (commit e950d7c), tag v0.1.0 moved to it (unpushed, so safe).
+   STILL OPEN: create GitHub remote marnold-ebsco/folio_orders_loader (no `gh` in WSL; create in browser),
+   then `git remote add origin git@github.com:marnold-ebsco/folio_orders_loader.git && git push -u origin main v0.1.0`.
+   Then commit the adapter in folio_ebsconet_orders, depending on this repo by git tag, and add the
+   loader to its requirements.txt.
 
 ## Session log (2026-09-30, late)
 - Verified item 2 code is committed (in 43d13d5); handoff was accurate.
@@ -85,8 +89,9 @@ Venv: `.venv/bin/python`.
   `type,number` (e.g. `PO,ZTLD001`), not po_number.
 
 ## Suggested order for the next session
-Set version + push (item 5), run the adapter live on bugfest (5a) after a dry run, then the
-remaining open checks in item 3 (builder gaps: description, receipt status, account fields).
+Create the GitHub remote and push (item 5); commit the adapter and add the loader to EBSCOnet
+requirements; then builder gaps (description, receipt status, account fields) and the remaining
+open checks in item 3 (over-budget/encumbrance errors, ISSN + title number).
 
 ## Working notes
 - Keep sessions short and single-purpose; start a fresh one for each Next item using this file.
