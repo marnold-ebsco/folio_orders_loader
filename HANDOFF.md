@@ -94,6 +94,8 @@ requirements.txt pins the loader @v0.2.0, pushed (4fc1a9d). The adapter has no s
 vendor_account. Not yet re-run live with the new fields.
 Receipt status + account (vendor_account) CLOSED 2026-09-30: already in builder/records/mapping/README with tests and
 verified live; no further account fields needed (paymentStatus, reference numbers deferred until a customer needs them).
+Throughput CLOSED 2026-09-30 (bugfest): 500 single-line POs (ISSN + Local identifier, e/p mix) loaded in 7m20s
+(0.88 s/PO), 0 errors; deleting them took 10m22s (1.2 s/PO); all 500 deleted. No open checks remain.
 Open checks CLOSED (2026-09-30, live on bugfest, test POs deleted): ISSN + title number works as two
 product_ids (type names must be tenant names: ISSN and Local identifier; there is no Title number type).
 Over-budget: a Pending PO for 99,999,999 on TEST-ELEC was created with no error; encumbrance is only
