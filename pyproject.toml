@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "folio_orders_loader"
+version = "0.1.0.dev0"
+description = "Load purchase orders into FOLIO via /orders/composite-orders"
+requires-python = ">=3.12"
+dependencies = ["folioclient"]
+
+[project.optional-dependencies]
+dev = ["pytest", "flake8"]
+
+[project.scripts]
+folio-orders-loader = "folio_orders_loader.cli:main"
+
+[tool.setuptools]
+packages = ["folio_orders_loader"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
