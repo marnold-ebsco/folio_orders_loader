@@ -78,6 +78,12 @@ Venv: `.venv/bin/python`.
 5. (Do first) Set pyproject version to 0.1.0 to match the tag. Create the GitHub remote and push main + tag, then the EBSCONET adapter in folio_ebsconet_orders
    (depends on this repo by git tag; maps its rows to the records.py neutral format).
 
+## Session log (2026-09-30, late)
+- Verified item 2 code is committed (in 43d13d5); handoff was accurate.
+- Ran validate --ini sunflower_bugfest.ini, dry run, then LIVE load of 2 POs (ZTLD001/2) with a
+  scratch map/data in /tmp/t, then deleted them. All OK. The delete CSV needs columns
+   (e.g. ), not po_number.
+
 ## Suggested order for the next session
 Set version + push (item 5), run the adapter live on bugfest (5a) after a dry run, then the
 remaining open checks in item 3 (builder gaps: description, receipt status, account fields).
