@@ -92,7 +92,10 @@ Builder gaps DONE (2026-09-30): description (poLineDescription), receipt_status,
 Loader v0.2.0 tagged and pushed. EBSCOnet adapter passes description + per-route receipt_status,
 requirements.txt pins the loader @v0.2.0, pushed (4fc1a9d). The adapter has no source column for
 vendor_account. Not yet re-run live with the new fields.
-Remaining open checks (item 3): over-budget/encumbrance errors, ISSN + title number.
+Open checks CLOSED (2026-09-30, live on bugfest, test POs deleted): ISSN + title number works as two
+product_ids (type names must be tenant names: ISSN and Local identifier; there is no Title number type).
+Over-budget: a Pending PO for 99,999,999 on TEST-ELEC was created with no error; encumbrance is only
+checked when a PO is opened, so the loader (Pending only) cannot hit it. Nothing to fix in the loader.
 
 ## Working notes
 - Keep sessions short and single-purpose; start a fresh one for each Next item using this file.
