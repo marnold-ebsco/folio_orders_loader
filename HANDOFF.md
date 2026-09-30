@@ -69,6 +69,12 @@ Venv: `.venv/bin/python`.
    account fields (these three are not in builder.py yet), throughput on a larger file.
 4. Commit: DONE locally (2026-09-30): git init (branch main), commit 43d13d5, tag v0.1.0. NOT pushed:
    GitHub remote `marnold-ebsco/folio_orders_loader` not created/added yet.
+5a. EBSCONET adapter written locally (uncommitted, in ~/scratch/EBSCOnet): pipeline/folio_orders_adapter.py
+   (prep workbooks -> neutral records -> folio_orders_loader.load; ) + tests/test_orders_adapter.py (3 pass, flake8 clean). The loader is
+   pip-installed editable into EBSCOnet/.venv (not in requirements.txt yet). Dry run on the three_type_test
+   workbooks (order numbers prefixed ZT): 140/140 dry-run OK. NOT yet run live. Gaps vs Data Import
+   route: builder ignores PO line description, receipt status, account fields; pyproject version is
+   0.1.0.dev0 though tagged v0.1.0.
 5. Create the GitHub remote and push main + tag, then the EBSCONET adapter in folio_ebsconet_orders
    (depends on this repo by git tag; maps its rows to the records.py neutral format).
 
