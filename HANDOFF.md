@@ -121,7 +121,7 @@ Live check still PENDING for payment_status, vendor reference numbers, notes/tag
 
 Remaining line-field groups, in order (do one group per session; schema:
 https://github.com/folio-org/acq-models mod-orders-storage/schemas/po_line.json):
-1. **Funds, locations, quantity, cost**: CODED (2026-09-30, not committed), 42 tests pass, flake8
+1. **Funds, locations, quantity, cost**: CODED and COMMITTED locally (92a5610, not pushed/tagged), 42 tests pass, flake8
    clean, README updated. Neutral keys: `fund_distribution[n].code/.expense_class_code/.value/.type`
    (percentage default; must sum 100), `locations[n].code/.quantity_physical/.quantity_electronic`
    (must sum to line quantities), `quantity_physical/_electronic`, `discount`, `discount_type`,
@@ -132,7 +132,10 @@ https://github.com/folio-org/acq-models mod-orders-storage/schemas/po_line.json)
    at /tmp/g1 (PO ZTG1001, P/E Mix, 60/40 TEST-ELEC/TEST-PRINT, qty 3/2, discount 10%, additional
    cost 4); dry run, --live, export, delete. Also bump version/tag v0.3.0 and update the EBSCOnet pin
    after the live check.
-2. **Bibliographic**: contributors (name + contributor name type), edition, publicationDate.
+2. **Bibliographic** (NEXT; follow the group-1 pattern: add a `contributors` entry to
+   records.REPEATING with sub-keys name/type, validate in records.py, build in builder.py, map in
+   mapping.py via REPEATING_RE, tests in tests/, README section; contributor name type needs a
+   Resolver lookup by name against /contributor-name-types): contributors (name + contributor name type), edition, publicationDate.
 3. **People/flags/tags**: line-level tags, requester, selector, rush.
 4. **Electronic extras**: eresource.resourceUrl, userLimit, trial; physical volumes,
    materialSupplier, expectedReceiptDate; details receivingNote, isAcknowledged,
