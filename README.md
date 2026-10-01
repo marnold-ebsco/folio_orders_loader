@@ -30,7 +30,7 @@ repo is never cloned onto the host. The repo is private: set `GITHUB_TOKEN` to a
 fine-grained token (Contents: read on this repo).
 
 ```
-GITHUB_TOKEN=ghp_xxx bash install.sh -v v0.3.3      # -v latest (default), -d install dir, -b link dir
+GITHUB_TOKEN=ghp_xxx bash install.sh -v v0.3.4      # -v latest (default), -d install dir, -b link dir
 ```
 
 Needs Python 3.12+ and curl. It links `folio-orders-loader` into `/usr/local/bin` (or
