@@ -198,7 +198,10 @@ name is used; Resolver.acquisition_unit queries /acquisitions-units/units by nam
    keys; add only when a customer asks.
 8. **`customFields`, `paymentTerms`, `claims`**: skip unless a customer needs them; tenant
    specific and schema-heavy.
-9. Reject electronic-only keys on physical lines (and vice versa) in `validate_line`.
+9. DONE (2026-09-30, e468df8, 82 tests): `validate_line` rejects electronic-only keys on
+   Physical lines and physical-only keys on Electronic lines (P/E Mix allows both; empty values
+   ignored). `material_type` and `access_provider_code` deliberately NOT checked (adapters fill
+   them on every row). README updated.
 
 ## Working notes
 - Keep sessions short and single-purpose; start a fresh one for each Next item using this file.
