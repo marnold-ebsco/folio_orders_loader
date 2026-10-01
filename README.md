@@ -26,17 +26,19 @@ python -m folio_orders_loader delete to_delete.csv --ini tenant.ini [--live]
 
 ## Install on a host (no clone)
 
-`install.sh` downloads one tagged release tarball and pip-installs it into its own venv, so the
-repo is never cloned onto the host. The repo is private: set `GITHUB_TOKEN` to a read-only
-fine-grained token (Contents: read on this repo).
+`install.sh` fetches only the files the loader needs, pinned to one commit SHA, and builds a venv
+with the package installed in it, so the repo is never cloned onto the host. The repo is public;
+no token is needed.
 
 ```
-GITHUB_TOKEN=ghp_xxx bash install.sh -v v0.3.5      # -v latest (default), -d install dir, -b link dir
+curl -fsSL https://raw.githubusercontent.com/marnold-ebsco/folio_orders_loader/main/install.sh | bash -s -- --dir ~/folio_orders_loader
+source ~/folio_orders_loader/venv/bin/activate && folio-orders-loader --help
 ```
 
-Needs Python 3.12+ and curl. It links `folio-orders-loader` into `/usr/local/bin` (or
-`~/.local/bin`). Upgrade by re-running with a newer `-v`; uninstall by deleting the install
-directory and the link.
+Options: `--dir PATH` (default `./folio_orders_loader`), `--ref REF` (branch or tag, default
+`main`, e.g. `v0.3.5`), `--recreate-venv`, `--check` (report whether an update is available and
+change nothing). Re-running with no flags updates in place when a newer commit exists. Needs
+Python 3.12+, curl and `python3-venv`. Uninstall by deleting the install directory.
 
 ## Mapping file
 
