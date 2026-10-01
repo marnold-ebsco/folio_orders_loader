@@ -114,6 +114,12 @@ looked up). `bill_to` / `ship_to` now take a tenant address NAME (looked up in m
 or an address UUID. `load --live --open` sets each created PO to Open afterwards; a PO that
 cannot open (e.g. no budget, over encumbrance) stays Pending and is reported `open-error`.
 
+Format-specific keys are checked: on a Physical Resource line `resource_url`, `user_limit`,
+`trial`, `expected_activation`, `activation_due` and `create_inventory_electronic` are errors;
+on an Electronic Resource line `volumes`, `material_supplier_code`, `expected_receipt_date`,
+`receipt_due` and `create_inventory_physical` are errors. P/E Mix allows both. `material_type`
+and `access_provider_code` are not checked, since adapters often fill them on every row.
+
 A `translate` miss or an unparseable date is an **error**: `validate` fails and `load`
 refuses to run until it is fixed.
 

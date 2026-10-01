@@ -40,6 +40,10 @@ LINE_FLAGS = (("automatic_export", "automaticExport"), ("collection", "collectio
               ("claiming_active", "claimingActive"), ("is_package", "isPackage"))
 LINE_UUIDS = (("instance_id", "instanceId"), ("agreement_id", "agreementId"),
               ("package_po_line_id", "packagePoLineId"))
+ELECTRONIC_ONLY = ("resource_url", "user_limit", "trial", "expected_activation",
+                   "activation_due", "create_inventory_electronic")
+PHYSICAL_ONLY = ("volumes", "material_supplier_code", "expected_receipt_date",
+                 "receipt_due", "create_inventory_physical")
 UUID_RE = re.compile(r"^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$", re.I)
 
 
@@ -193,6 +197,13 @@ def validate_line(line):
         if n is None or n < 0 or n != int(n):
             problems.append("activation_due must be a whole number of days")
     fmt = line.get("order_format")
+    # material_type and access_provider_code are left out on purpose: adapters
+    # and mapped files commonly fill them on every row whatever the format.
+    wrong = {"Physical Resource": ELECTRONIC_ONLY,
+             "Electronic Resource": PHYSICAL_ONLY}.get(fmt, ())
+    for key in wrong:
+        if line.get(key) not in (None, "", False):
+            problems.append(f"{key} is not allowed on a {fmt} line")
     if fmt in ("Physical Resource", "P/E Mix") and not line.get("material_type"):
         problems.append("material_type required for physical lines")
     if line.get("order_type") == "Ongoing" and not line.get("interval_days"):
