@@ -66,7 +66,12 @@ Venv: `.venv/bin/python`.
    run skipped all. Test POs deleted. The `error` detail is now trimmed to
    "message (code)" by `loader.error_message` (DONE, tested). All open checks are closed (see below).
    Clean-venv `pip install -e .[dev]` confirmed (2026-09-30). Not done: adapter live re-run
-   (bugfest login returned 503), an "open order" step, payment status / reference numbers.
+   (bugfest login returned 503), an "open order" step.
+   Payment status + vendor reference numbers: CODED (2026-09-30): `payment_status`,
+   `vendor_reference_number` + `vendor_reference_type` (enums from the acq-models schemas;
+   "Vendor title number" is a reference type, probably what "title number" meant), 31 tests
+   pass, README updated. LIVE CHECK PENDING (bugfest login 503): load one PO with both,
+   export it, confirm paymentStatus and vendorDetail.referenceNumbers, delete it.
 4. Commit: DONE locally (2026-09-30): git init (branch main), commit 43d13d5, tag v0.1.0. NOT pushed:
    GitHub remote `marnold-ebsco/folio_orders_loader` not created/added yet.
 5a. EBSCONET adapter written locally (uncommitted, in ~/scratch/EBSCOnet): pipeline/folio_orders_adapter.py

@@ -6,6 +6,11 @@ PO_NUMBER_RE = re.compile(r"^[a-zA-Z0-9]{1,22}$")
 FORMATS = ("Electronic Resource", "Physical Resource", "P/E Mix")
 RECEIPT_STATUSES = ("Pending", "Awaiting Receipt", "Partially Received",
                     "Fully Received", "Receipt Not Required", "Ongoing", "Cancelled")
+PAYMENT_STATUSES = ("Awaiting Payment", "Cancelled", "Fully Paid", "Partially Paid",
+                    "Payment Not Required", "Pending", "Ongoing")
+REFERENCE_TYPES = ("Vendor continuation reference number", "Vendor order reference number",
+                   "Vendor subscription reference number", "Vendor internal number",
+                   "Vendor title number")
 ORDER_TYPES = ("Ongoing", "One-Time")
 
 REQUIRED = ("po_number", "vendor_code", "title", "order_format", "cost",
@@ -32,6 +37,14 @@ def validate_line(line):
         problems.append(f"order_type {line['order_type']!r} not in {ORDER_TYPES}")
     if line.get("receipt_status") and line["receipt_status"] not in RECEIPT_STATUSES:
         problems.append(f"receipt_status {line['receipt_status']!r} not in {RECEIPT_STATUSES}")
+    if line.get("payment_status") and line["payment_status"] not in PAYMENT_STATUSES:
+        problems.append(f"payment_status {line['payment_status']!r} not in {PAYMENT_STATUSES}")
+    if line.get("vendor_reference_number"):
+        ref_type = line.get("vendor_reference_type")
+        if ref_type not in REFERENCE_TYPES:
+            problems.append(f"vendor_reference_type {ref_type!r} not in {REFERENCE_TYPES}")
+    elif line.get("vendor_reference_type"):
+        problems.append("vendor_reference_type given without vendor_reference_number")
     fmt = line.get("order_format")
     if fmt in ("Physical Resource", "P/E Mix") and not line.get("material_type"):
         problems.append("material_type required for physical lines")

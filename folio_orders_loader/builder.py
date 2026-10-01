@@ -46,7 +46,13 @@ def build_line(line, r):
         out["poLineDescription"] = line["description"]
     if line.get("receipt_status"):
         out["receiptStatus"] = line["receipt_status"]
+    if line.get("payment_status"):
+        out["paymentStatus"] = line["payment_status"]
     vendor_detail = {}
+    if line.get("vendor_reference_number"):
+        vendor_detail["referenceNumbers"] = [{
+            "refNumber": line["vendor_reference_number"],
+            "refNumberType": line["vendor_reference_type"]}]
     if line.get("vendor_account"):
         vendor_detail["vendorAccount"] = line["vendor_account"]
     if vendor_detail:

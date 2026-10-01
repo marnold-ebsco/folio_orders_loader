@@ -63,6 +63,14 @@ Pending, Awaiting Receipt, Partially Received, Fully Received, Receipt Not Requi
 Cancelled; anything else is an error) and `vendor_account` (vendorDetail.vendorAccount) are
 written when present.
 
+Also optional: `payment_status` (one of Awaiting Payment, Cancelled, Fully Paid, Partially Paid,
+Payment Not Required, Pending, Ongoing) and a vendor reference number, given as
+`vendor_reference_number` plus `vendor_reference_type` (one of Vendor continuation reference
+number, Vendor order reference number, Vendor subscription reference number, Vendor internal
+number, Vendor title number), written to `vendorDetail.referenceNumbers`. The type is required
+with the number. "Vendor title number" is the place for a vendor's title number if you do not
+want it as a product ID.
+
 `date_format` (date fields only: `renewal_date`, `subscription_from`, `subscription_to`) is a
 Python strptime pattern that converts the source value to ISO `YYYY-MM-DD`, e.g.
 `{"folio_field": "subscription_to", "legacy_field": "End", "date_format": "%m/%d/%Y"}`.

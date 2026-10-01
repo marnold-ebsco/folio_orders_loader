@@ -27,7 +27,8 @@ OPTIONAL = ("interval_days", "is_subscription", "manual_renewal",
             "renewal_date", "subscription_from", "subscription_to",
             "publisher", "cancellation_restriction", "access_provider_code",
             "location_code", "material_type", "description", "receipt_status",
-            "vendor_account")
+            "vendor_account", "payment_status", "vendor_reference_number",
+            "vendor_reference_type")
 BOOLEAN = ("is_subscription", "manual_renewal", "cancellation_restriction")
 PRODUCT_ID_RE = re.compile(r"^product_ids\[(\d+)\]\.(type|value)$")
 ROW_KEYS = ("folio_field", "legacy_field", "value", "description",

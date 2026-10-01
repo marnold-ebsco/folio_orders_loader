@@ -129,3 +129,23 @@ def test_error_message_extracts_folio_errors():
            '"code": "budgetExpenseClassNotFound", "parameters": []}]}')
     assert error_message(Exception(raw)) == "Budget not found (budgetExpenseClassNotFound)"
     assert error_message(Exception("boom\n  bad {")) == "boom bad {"
+
+
+def test_payment_status_and_reference_number():
+    from folio_orders_loader.lookups import Resolver
+    extra = {"payment_status": "Payment Not Required", "vendor_account": "9",
+             "vendor_reference_number": "T-77",
+             "vendor_reference_type": "Vendor title number"}
+    pol = build_order("P1", [line(**extra)], Resolver(FakeClient()))["compositePoLines"][0]
+    assert pol["paymentStatus"] == "Payment Not Required"
+    assert pol["vendorDetail"] == {
+        "vendorAccount": "9",
+        "referenceNumbers": [{"refNumber": "T-77", "refNumberType": "Vendor title number"}]}
+
+
+def test_bad_payment_status_and_reference_type_rejected():
+    assert any("payment_status" in p for p in validate_line(line(payment_status="Paid")))
+    assert any("vendor_reference_type" in p
+               for p in validate_line(line(vendor_reference_number="1")))
+    orphan = line(vendor_reference_type="Vendor title number")
+    assert any("without" in p for p in validate_line(orphan))
