@@ -272,10 +272,12 @@ Bugfest was back up. Scratch map/data lived in the session scratchpad; every tes
 - Over-budget / budget checks and `--open` failure path (open-error) not exercised.
 - Electronic lines with a quantity need a location (`electronicLocCostQtyMismatch` otherwise);
   consider a validate rule that flags quantity without a matching location.
-- EBSCOnet adapter live re-run with the new loader fields: STARTED 2026-10-01 (140 POs from
-  `out/three_type_test`); see the result line below if it was recorded. After it, spot-check one
-  PO in the FOLIO UI and delete all 140 with JSON backups outside the repo
-  (`~/scratch/ebsconet_bugfest_backup_*`).
+- EBSCOnet adapter live re-run with the new loader fields: DONE 2026-10-01. 140/140 POs created,
+  0 errors (one transient `RemoteProtocolError`, retried automatically), about 10 minutes.
+  Spot-checked M2822798 by API export (Ongoing, 365-day interval, TEST-ELEC, publisher,
+  receipt status, generated NOISSN-M2822798 product ID); NOT checked in the FOLIO UI. All 140
+  deleted with JSON backups in `~/scratch/ebsconet_bugfest_backup_2026-10-01` (outside the repo).
+  Bugfest holds none of these POs now.
 - Release (only after the above): bump pyproject to v0.3.0, tag, push, update the pin in
   `~/scratch/EBSCOnet/requirements.txt`, rerun EBSCOnet tests.
 - Open question carried over: whether `out/three_type_test/*.xlsx` hold synthetic or
