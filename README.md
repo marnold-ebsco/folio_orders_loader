@@ -23,6 +23,20 @@ python -m folio_orders_loader delete to_delete.csv --ini tenant.ini [--live]
   a filled-in one.
 * PO numbers must match `^[a-zA-Z0-9]{1,22}$`. Lines sharing a `po_number` form one PO.
 
+## Install on a host (no clone)
+
+`install.sh` downloads one tagged release tarball and pip-installs it into its own venv, so the
+repo is never cloned onto the host. The repo is private: set `GITHUB_TOKEN` to a read-only
+fine-grained token (Contents: read on this repo).
+
+```
+GITHUB_TOKEN=ghp_xxx bash install.sh -v v0.3.3      # -v latest (default), -d install dir, -b link dir
+```
+
+Needs Python 3.12+ and curl. It links `folio-orders-loader` into `/usr/local/bin` (or
+`~/.local/bin`). Upgrade by re-running with a newer `-v`; uninstall by deleting the install
+directory and the link.
+
 ## Mapping file
 
 A mapping file is required for file input. It uses the folio-migration-mapper row format, but
