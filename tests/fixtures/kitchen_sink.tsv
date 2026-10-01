@@ -1,0 +1,26 @@
+﻿PO	Vendor	Title	Format	Cost	Currency	Fund	ExpClass	Fund1	Exp1	Pct1	Fund2	Exp2	Pct2	OrderType	Interval	Method	MatType	Loc	L1	L1p	L1e	L2	L2p	L2e	QtyP	QtyE	ISSN	SubTo	RcptDate	RcptStatus	PayStatus	Notes	Tags	BillTo	Prefix	Contrib1	Contrib1Type	Contrib2	Contrib2Type	Url	Volumes	Rush
+KS001	ACME	A Synthetic Title	Online	100.00	USD	TEST-ELEC	GEN							Sub	365	Purchase											1234-5678	2026-12-31														
+KS002	ACME	A Synthetic Title	Print	100.00	USD	TEST-PRINT	GEN							Mono		Purchase	journal	MAIN									1234-5678															
+KS003	ACME	Line one	Mix	$1,234.50	USD	TEST-ELEC	GEN							Sub	365	Purchase	journal	MAIN									1234-5678	2026-12-31														
+KS003	ACME	Line two	Mix	$2,000.00	USD	TEST-ELEC	GEN							Sub	365	Purchase	journal	MAIN									1234-5678	2026-12-31														
+KS004	ACME	A Synthetic Title	Mix	100.00	USD			TEST-ELEC	GEN	60	TEST-PRINT	GEN	40	Sub	365	Purchase	journal		MAIN	1	1	BRANCH	1	0	2	1	1234-5678	2026-12-31								Doe, Jane	Personal name	Example Press	Corporate name			
+KS005	ACME	A Synthetic Title	ONLINE	100.00	USD	x-test-elec	GEN							Sub	365	Purchase											1234-5678	2026-12-31	03/04/2026	Pending	Pending											
+KS006	ACME	A Synthetic Title	Online	100.00	USD	TEST-ELEC	GEN							Sub	365	Purchase											1234-5678	2026-12-31				first note|second note	alpha|beta	Main Library	KS							
+KS007	ACME	A Synthetic Title	Online	100.00	USD	TEST-ELEC	GEN							Sub	365	Purchase											1234-5678	2026-12-31												https://example.org/ks007		yes
+KS008	ACME	A Synthetic Title	Print	100.00	USD	TEST-PRINT	GEN							Mono		Purchase	journal										1234-5678														v.1|v.2	
+KS101	ACME		Online	100.00	USD	TEST-ELEC	GEN							Sub	365	Purchase											1234-5678	2026-12-31														
+KS-102	ACME	A Synthetic Title	Online	100.00	USD	TEST-ELEC	GEN							Sub	365	Purchase											1234-5678	2026-12-31														
+KS103	ACME	A Synthetic Title	Online	100.00	USD			TEST-ELEC	GEN	50	TEST-PRINT	GEN	40	Sub	365	Purchase											1234-5678	2026-12-31														
+KS104	ACME	A Synthetic Title	Print	100.00	USD	TEST-ELEC	GEN							Mono		Purchase	journal		MAIN	1					3		1234-5678															
+KS105	ACME	A Synthetic Title	Print	100.00	USD	TEST-ELEC	GEN							Mono		Purchase	journal	MAIN									1234-5678													https://example.org		
+KS106	ACME	A Synthetic Title	Online	100.00	USD	TEST-ELEC	GEN							Sub		Purchase											1234-5678	2026-12-31														
+KS107	ACME	A Synthetic Title	Online	100.00	USD	TEST-ELEC	GEN							Sub	365	Purchase											1234-5678	2026-12-31		Maybe Later												
+KS108	ACME	A Synthetic Title	Online	100.00	USD	TEST-ELEC	GEN							Sub	365	Purchase											1234-5678	2026-12-31														
+KS108	OTHERCO	A Synthetic Title	Online	100.00	USD	TEST-ELEC	GEN							Sub	365	Purchase											1234-5678	2026-12-31														
+KS109	ACME	A Synthetic Title	Print	100.00	USD	TEST-ELEC	GEN							Mono		Purchase		MAIN									1234-5678															
+KS110	ACME	A Synthetic Title	Online	100.00	USD	TEST-ELEC	GEN							Sub	365	Purchase											1234-5678	2026-12-31			Paid-ish											
+KS201	ACME	A Synthetic Title	Carrier pigeon	100.00	USD	TEST-ELEC	GEN							Sub	365	Purchase											1234-5678	2026-12-31														
+KS202	ACME	A Synthetic Title	Online	100.00	USD	TEST-ELEC	GEN							Sub	365	Purchase											1234-5678	2026-12-31	31/31/2026													
+KS301	NOSUCHVENDOR	A Synthetic Title	Online	100.00	USD	TEST-ELEC	GEN							Sub	365	Purchase											1234-5678	2026-12-31														
+KS401	ACME	A Synthetic Title	Online	100.00	USD	TEST-ELEC	GEN							Sub	365	Purchase											1234-5678	2026-12-31														
+KS501	ACME	A Synthetic Title	Online	100.00	USD	TEST-ELEC	GEN							Sub	365	Purchase											1234-5678	2026-12-31														

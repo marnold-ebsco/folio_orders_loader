@@ -1,0 +1,208 @@
+{
+  "reader": {
+    "delimiter": "\t",
+    "encoding": "utf-8-sig"
+  },
+  "data": [
+    {
+      "folio_field": "po_number",
+      "legacy_field": "PO"
+    },
+    {
+      "folio_field": "vendor_code",
+      "legacy_field": "Vendor"
+    },
+    {
+      "folio_field": "title",
+      "legacy_field": "Title"
+    },
+    {
+      "folio_field": "order_format",
+      "legacy_field": "Format",
+      "translate": {
+        "Online": "Electronic Resource",
+        "Print": "Physical Resource",
+        "Mix": "P/E Mix"
+      }
+    },
+    {
+      "folio_field": "cost",
+      "legacy_field": "Cost"
+    },
+    {
+      "folio_field": "currency",
+      "legacy_field": "Currency"
+    },
+    {
+      "folio_field": "fund_code",
+      "legacy_field": "Fund",
+      "rules": [
+        {
+          "op": "strip_prefix",
+          "text": "x-"
+        },
+        {
+          "op": "upper"
+        }
+      ]
+    },
+    {
+      "folio_field": "expense_class_code",
+      "legacy_field": "ExpClass"
+    },
+    {
+      "folio_field": "fund_distribution[0].code",
+      "legacy_field": "Fund1"
+    },
+    {
+      "folio_field": "fund_distribution[0].expense_class_code",
+      "legacy_field": "Exp1"
+    },
+    {
+      "folio_field": "fund_distribution[0].value",
+      "legacy_field": "Pct1"
+    },
+    {
+      "folio_field": "fund_distribution[1].code",
+      "legacy_field": "Fund2"
+    },
+    {
+      "folio_field": "fund_distribution[1].expense_class_code",
+      "legacy_field": "Exp2"
+    },
+    {
+      "folio_field": "fund_distribution[1].value",
+      "legacy_field": "Pct2"
+    },
+    {
+      "folio_field": "order_type",
+      "legacy_field": "OrderType",
+      "translate": {
+        "Sub": "Ongoing",
+        "Mono": "One-Time"
+      }
+    },
+    {
+      "folio_field": "interval_days",
+      "legacy_field": "Interval"
+    },
+    {
+      "folio_field": "acquisition_method",
+      "legacy_field": "Method",
+      "translate": {
+        "Purchase": "Purchase At Vendor System"
+      }
+    },
+    {
+      "folio_field": "material_type",
+      "legacy_field": "MatType"
+    },
+    {
+      "folio_field": "location_code",
+      "legacy_field": "Loc"
+    },
+    {
+      "folio_field": "locations[0].code",
+      "legacy_field": "L1"
+    },
+    {
+      "folio_field": "locations[0].quantity_physical",
+      "legacy_field": "L1p"
+    },
+    {
+      "folio_field": "locations[0].quantity_electronic",
+      "legacy_field": "L1e"
+    },
+    {
+      "folio_field": "locations[1].code",
+      "legacy_field": "L2"
+    },
+    {
+      "folio_field": "locations[1].quantity_physical",
+      "legacy_field": "L2p"
+    },
+    {
+      "folio_field": "locations[1].quantity_electronic",
+      "legacy_field": "L2e"
+    },
+    {
+      "folio_field": "quantity_physical",
+      "legacy_field": "QtyP"
+    },
+    {
+      "folio_field": "quantity_electronic",
+      "legacy_field": "QtyE"
+    },
+    {
+      "folio_field": "product_ids[0].value",
+      "legacy_field": "ISSN"
+    },
+    {
+      "folio_field": "product_ids[0].type",
+      "legacy_field": "Not mapped",
+      "value": "ISSN"
+    },
+    {
+      "folio_field": "subscription_to",
+      "legacy_field": "SubTo",
+      "date_format": "%Y-%m-%d"
+    },
+    {
+      "folio_field": "receipt_date",
+      "legacy_field": "RcptDate",
+      "date_format": "%m/%d/%Y"
+    },
+    {
+      "folio_field": "receipt_status",
+      "legacy_field": "RcptStatus"
+    },
+    {
+      "folio_field": "payment_status",
+      "legacy_field": "PayStatus"
+    },
+    {
+      "folio_field": "notes",
+      "legacy_field": "Notes"
+    },
+    {
+      "folio_field": "tags",
+      "legacy_field": "Tags"
+    },
+    {
+      "folio_field": "bill_to",
+      "legacy_field": "BillTo"
+    },
+    {
+      "folio_field": "po_number_prefix",
+      "legacy_field": "Prefix"
+    },
+    {
+      "folio_field": "contributors[0].name",
+      "legacy_field": "Contrib1"
+    },
+    {
+      "folio_field": "contributors[0].type",
+      "legacy_field": "Contrib1Type"
+    },
+    {
+      "folio_field": "contributors[1].name",
+      "legacy_field": "Contrib2"
+    },
+    {
+      "folio_field": "contributors[1].type",
+      "legacy_field": "Contrib2Type"
+    },
+    {
+      "folio_field": "resource_url",
+      "legacy_field": "Url"
+    },
+    {
+      "folio_field": "volumes",
+      "legacy_field": "Volumes"
+    },
+    {
+      "folio_field": "rush",
+      "legacy_field": "Rush"
+    }
+  ]
+}
