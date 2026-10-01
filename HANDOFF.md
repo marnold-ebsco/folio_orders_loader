@@ -142,8 +142,10 @@ https://github.com/folio-org/acq-models mod-orders-storage/schemas/po_line.json)
    records.REPEATING with sub-keys name/type, validate in records.py, build in builder.py, map in
    mapping.py via REPEATING_RE, tests in tests/, README section; contributor name type needs a
    Resolver lookup by name against /contributor-name-types): contributors (name + contributor name type), edition, publicationDate.
-3. **People/flags/tags** (NEXT): line-level tags, requester, selector, rush.
-4. **Electronic extras**: eresource.resourceUrl, userLimit, trial; physical volumes,
+3. **People/flags/tags**: CODED and COMMITTED locally (not pushed/tagged), 49 tests pass, flake8 clean,
+   README updated. Neutral keys: `line_tags` (| list -> line tags.tagList; `tags` stays PO level),
+   `requester`, `selector`, `rush` (boolean). LIVE CHECK PENDING: load, export, confirm, delete.
+4. **Electronic extras** (NEXT): eresource.resourceUrl, userLimit, trial; physical volumes,
    materialSupplier, expectedReceiptDate; details receivingNote, isAcknowledged,
    subscriptionInterval, productIds qualifier; receiptDate; renewalNote, cancellationRestrictionNote.
 5. **Maybe**: donor/donorOrganizationIds, paymentTerms, multiYearPayment, claiming*, automaticExport,

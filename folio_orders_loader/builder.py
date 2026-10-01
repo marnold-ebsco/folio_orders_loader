@@ -64,6 +64,14 @@ def build_line(line, r):
                     for c in line.get("contributors") or []]
     if contributors:
         out["contributors"] = contributors
+    line_tags = as_list(line.get("line_tags"))
+    if line_tags:
+        out["tags"] = {"tagList": line_tags}
+    for key, field in (("requester", "requester"), ("selector", "selector")):
+        if line.get(key):
+            out[field] = str(line[key])
+    if line.get("rush"):
+        out["rush"] = True
     if line.get("description"):
         out["poLineDescription"] = line["description"]
     if line.get("receipt_status"):

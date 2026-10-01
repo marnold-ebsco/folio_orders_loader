@@ -74,6 +74,11 @@ true/yes/y/1. `product_ids[n].type` / `.value` build the line's product ID list.
 build the contributor list; `.type` must be a contributor name type name in the tenant (for
 example `Personal name`, `Corporate name`, `Meeting name`).
 
+### People, flags and line tags
+
+`line_tags` (`|`-separated list or a list; goes to the PO line's `tags.tagList`, unlike `tags`,
+which is PO level), `requester` and `selector` (free text), `rush` (boolean, true/yes/y/1).
+
 A `translate` miss or an unparseable date is an **error**: `validate` fails and `load`
 refuses to run until it is fixed.
 
