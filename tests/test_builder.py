@@ -121,3 +121,11 @@ def test_description_receipt_status_and_vendor_account():
 def test_bad_receipt_status_rejected():
     from folio_orders_loader.records import validate_line
     assert any("receipt_status" in p for p in validate_line(line(receipt_status="Done")))
+
+
+def test_error_message_extracts_folio_errors():
+    from folio_orders_loader.loader import error_message
+    raw = ('Client error 400\n{"errors": [{"message": "Budget not found", '
+           '"code": "budgetExpenseClassNotFound", "parameters": []}]}')
+    assert error_message(Exception(raw)) == "Budget not found (budgetExpenseClassNotFound)"
+    assert error_message(Exception("boom\n  bad {")) == "boom bad {"

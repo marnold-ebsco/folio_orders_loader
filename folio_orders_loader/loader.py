@@ -1,4 +1,6 @@
 """Load grouped PO records: skip existing POs, dry run unless live."""
+import json
+
 from .builder import build_order
 from .lookups import LookupError_, Resolver
 from .records import group_by_po
@@ -9,6 +11,26 @@ def po_exists(client, po_number):
         "/orders/composite-orders", key="purchaseOrders",
         query_params={"query": 'poNumber=="%s"' % po_number, "limit": 1})
     return bool(hits)
+
+
+def error_message(exc):
+    """Shorten a FOLIO error to its message(s) and code(s); fall back to raw text."""
+    text = str(exc)
+    start = text.find("{")
+    if start >= 0:
+        try:
+            body, _ = json.JSONDecoder().raw_decode(text[start:])
+            errors = body.get("errors") if isinstance(body, dict) else None
+            parts = []
+            for err in errors or []:
+                msg = err.get("message") or ""
+                code = err.get("code")
+                parts.append(f"{msg} ({code})" if code and code not in msg else msg)
+            if any(parts):
+                return "; ".join(p for p in parts if p)[:500]
+        except ValueError:
+            pass
+    return " ".join(text.split())[:500]
 
 
 def load(client, lines, live=False):
@@ -38,7 +60,7 @@ def load(client, lines, live=False):
         try:
             created = client.folio_post("/orders/composite-orders", order)
         except Exception as exc:  # FOLIO validation errors, network errors
-            results.append((po, "error", str(exc)[:500]))
+            results.append((po, "error", error_message(exc)))
             continue
         nums = ",".join(ln["poLineNumber"]
                         for ln in created["compositePoLines"])
