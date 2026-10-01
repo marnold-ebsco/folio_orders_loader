@@ -109,6 +109,34 @@ product_ids (type names must be tenant names: ISSN and Local identifier; there i
 Over-budget: a Pending PO for 99,999,999 on TEST-ELEC was created with no error; encumbrance is only
 checked when a PO is opened, so the loader (Pending only) cannot hit it. Nothing to fix in the loader.
 
+## Field coverage and remaining groups (2026-09-30)
+Roughly 35% of settable PO/line top-level fields are covered. DONE: PO number, vendor, orderType,
+ongoing, workflowStatus (always Pending), notes, tags, bill_to, ship_to; line title, acquisition
+method, format, source, checkinItems, cancellationRestriction, fundDistribution (ONE fund, 100%),
+cost (list price only), details (productIds, subscriptionFrom/To), publisher, description,
+receiptStatus, paymentStatus, vendorDetail (account, referenceNumbers), eresource (accessProvider,
+activated, createInventory), physical (materialType, createInventory), locations (ONE, qty 1).
+Live check still PENDING for payment_status, vendor reference numbers, notes/tags/bill_to/ship_to
+(bugfest login was 503 on 2026-09-30 evening).
+
+Remaining line-field groups, in order (do one group per session; schema:
+https://github.com/folio-org/acq-models mod-orders-storage/schemas/po_line.json):
+1. **Funds, locations, quantity, cost** (NEXT): several funds per line (percentage or amount,
+   expense class each), several locations with quantities, quantityPhysical/Electronic above 1,
+   discount, additionalCost, exchangeRate, discountType. Needs a neutral-record design for repeating
+   funds/locations (e.g. fund_distribution[n].code/.value/.type like product_ids[n]) and the mapping.
+2. **Bibliographic**: contributors (name + contributor name type), edition, publicationDate.
+3. **People/flags/tags**: line-level tags, requester, selector, rush.
+4. **Electronic extras**: eresource.resourceUrl, userLimit, trial; physical volumes,
+   materialSupplier, expectedReceiptDate; details receivingNote, isAcknowledged,
+   subscriptionInterval, productIds qualifier; receiptDate; renewalNote, cancellationRestrictionNote.
+5. **Maybe**: donor/donorOrganizationIds, paymentTerms, multiYearPayment, claiming*, automaticExport,
+   collection, suppressInstanceFromDiscovery, instanceId, agreementId, isPackage/packagePoLineId,
+   customFields. Skip system fields (id, metadata, poLineNumber, purchaseOrderId, searchLocationIds,
+   lastExport, lastEDIExportDate).
+Also unbuilt: address name -> UUID lookup for bill_to/ship_to, an "open order" step, PO-level
+acqUnitIds, poNumberPrefix/Suffix, assignedTo, template, manualPo, reEncumber, customFields.
+
 ## Working notes
 - Keep sessions short and single-purpose; start a fresh one for each Next item using this file.
 - Run only relevant tests with `| tail`; delegate broad searches to an Explore agent.
