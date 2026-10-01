@@ -159,6 +159,35 @@ Without it the value must already be ISO.
  "rules": [{"op": "strip_prefix", "text": "X-"}, {"op": "upper"}]}
 ```
 
+## Known gaps
+
+PO and PO line fields the loader does not set. Fields not listed here are covered.
+
+**PO level**
+- `template`
+- `customFields`
+- Workflow status: POs are created Pending; `--open` is the only way to open them.
+- Dates such as `dateOrdered` and `approvalDate`
+- Acquisition units are looked up by name only (units have no code)
+- System fields (`id`, `metadata`, generated numbers) are skipped on purpose
+
+**PO line level**
+- `paymentTerms` (multi-year prepayment object)
+- `customFields`
+- `claims` (array of claim records)
+- Location sub-fields (receipt and others)
+- `eresource.license`
+- `eresource.materialType`
+- `source` (always "User")
+- Extra per-fund fields in the fund distribution (e.g. encumbrance override)
+- System fields (`lastExport`, `lastEDIExportDate`, `poLineNumber`, etc.), skipped on purpose
+
+**Behavior**
+- Not live-verified yet: payment status, vendor reference numbers, notes/tags, addresses,
+  `--open`, and the group 1-6 fields.
+- `material_type` and `access_provider_code` are not checked against the line format.
+- `assigned_to` and the instance, agreement and package UUIDs are not looked up.
+
 ## Development
 
 ```
