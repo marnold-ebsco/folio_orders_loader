@@ -169,3 +169,11 @@ def test_po_notes_tags_bill_to_ship_to():
 def test_po_level_must_agree():
     _, problems = group_by_po([line(notes="a"), line(notes="b")])
     assert any("notes" in m for m in problems["P1"])
+
+
+def test_blank_expense_class_omits_expense_class_id():
+    from folio_orders_loader.lookups import Resolver
+    order = build_order("P1", [line(expense_class_code="")], Resolver(FakeClient()))
+    dist = order["compositePoLines"][0]["fundDistribution"][0]
+    assert "expenseClassId" not in dist
+    assert dist["code"] == "F"

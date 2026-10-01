@@ -11,10 +11,11 @@ def build_line(line, r):
     distribution = []
     for f in fund_list(line):
         fund = r.fund(f["code"])
-        distribution.append({
-            "fundId": fund["id"], "code": fund["code"],
-            "expenseClassId": r.expense_class(f["expense_class_code"]),
-            "distributionType": f["type"], "value": float(f["value"])})
+        entry = {"fundId": fund["id"], "code": fund["code"],
+                 "distributionType": f["type"], "value": float(f["value"])}
+        if f["expense_class_code"]:
+            entry["expenseClassId"] = r.expense_class(f["expense_class_code"])
+        distribution.append(entry)
 
     details = {}
     ids = []

@@ -43,3 +43,10 @@ def test_expense_class_missing_or_inactive():
 def test_duplicate_pairs_reported_once():
     r = FakeResolver({"F": None})
     assert len(check_budgets([line("F", "GEN"), line("F", "GEN")], r)) == 1
+
+
+def test_blank_expense_class_skips_class_check():
+    r = FakeResolver({"F": budget(("GEN", "Active"))})
+    assert check_budgets([line("F", None), line("F", "")], r) == []
+    assert "no Active budget" in check_budgets(
+        [line("F", None)], FakeResolver({"F": None}))[0]

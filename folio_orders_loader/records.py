@@ -18,7 +18,8 @@ ORDER_TYPES = ("Ongoing", "One-Time")
 REQUIRED = ("po_number", "vendor_code", "title", "order_format", "cost",
             "currency", "order_type", "acquisition_method")
 # Single-fund shorthand; replaced by fund_distribution[n] for several funds.
-FUND_FIELDS = ("fund_code", "expense_class_code")
+# Required unless fund_distribution is used; expense_class_code is optional.
+FUND_FIELDS = ("fund_code",)
 DISTRIBUTION_TYPES = ("percentage", "amount")
 DISCOUNT_TYPES = ("amount", "percentage")
 # Repeating groups: name -> sub-keys (neutral records hold a list of dicts).
@@ -95,17 +96,13 @@ def location_list(line):
 
 
 def _check_funds(line, problems):
-    if not line.get("fund_distribution") and not all(
-            line.get(k) for k in FUND_FIELDS):
-        problems.append("missing fund_code/expense_class_code "
-                        "(or fund_distribution)")
+    if not line.get("fund_distribution") and not line.get("fund_code"):
+        problems.append("missing fund_code (or fund_distribution)")
         return
     funds = fund_list(line)
     for i, f in enumerate(funds):
         if not f["code"]:
             problems.append(f"fund_distribution[{i}]: missing code")
-        if not f["expense_class_code"]:
-            problems.append(f"fund_distribution[{i}]: missing expense_class_code")
         if f["type"] not in DISTRIBUTION_TYPES:
             problems.append(f"fund_distribution[{i}]: type {f['type']!r} "
                             f"not in {DISTRIBUTION_TYPES}")

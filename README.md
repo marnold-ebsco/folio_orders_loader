@@ -57,7 +57,9 @@ true/yes/y/1. `product_ids[n].type` / `.value` build the line's product ID list.
 
 ### Several funds, several locations, quantity and cost extras
 
-- `fund_code` + `expense_class_code` remain the one-fund shorthand (100%). For several funds map
+- `fund_code` (+ optional `expense_class_code`) is the one-fund shorthand (100%). The expense
+  class is optional: leave it blank for a tenant that does not use classes and no `expenseClassId`
+  is sent. A class that is given must resolve and, in `validate`, be Active on the fund's budget. For several funds map
   `fund_distribution[n].code`, `.expense_class_code` (falls back to the line's
   `expense_class_code`), `.value` and `.type` (`percentage` default, or `amount`). Percentages
   must add to 100; `$` and commas are accepted in `.value`.

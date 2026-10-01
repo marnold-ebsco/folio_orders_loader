@@ -23,6 +23,8 @@ def check_budgets(lines, r):
             errors.append("fund %s has no Active budget for the current fiscal year"
                           % pair[0])
             continue
+        if not pair[1]:
+            continue
         ec_id = r.expense_class(pair[1])
         active = {e["expenseClassId"] for e in budget.get("statusExpenseClasses") or []
                   if e.get("status") == "Active"}

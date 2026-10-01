@@ -113,3 +113,10 @@ def test_check_map_fund_requirement():
                                       spec("expense_class_code", "c")]}) == []
     assert any("unknown" in p for p in check_map(
         {"data": base + [spec("locations[0].bogus", "c")]}))
+
+
+def test_blank_expense_class_is_valid():
+    assert validate_line(line(expense_class_code="")) == []
+    one = line(fund_distribution=[{"code": "A", "value": 100}])
+    del one["fund_code"]
+    assert validate_line(one) == []
