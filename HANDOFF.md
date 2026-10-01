@@ -1,4 +1,4 @@
-# Handoff (2026-10-01): folio_orders_loader v0.3.4 released
+# Handoff (2026-10-01): folio_orders_loader v0.3.5 released
 
 This file covers the loader package only. The EBSCOnet side (adapter, `ebsconet.py` workflow,
 `api-load-default` branch, vendor accounts, real-tenant test) is tracked in
@@ -50,6 +50,11 @@ Background: `FINDINGS.md` (spike results, verdict GO), `API_SPIKE.md` (original 
 - v0.3.3 / v0.3.4 released 2026-10-01 (tags pushed; v0.3.4 = 9cb603e): `install.sh` + README
   "Install on a host (no clone)". v0.3.3's tag lacks the README section; use v0.3.4. No code change.
   EBSCOnet pin bumped to v0.3.4 (f625908), 197 tests pass.
+- v0.3.5 released 2026-10-01 (tag pushed, 7c2ef79): `template` omits the `reader` block by default (it conflicted
+  with other mapping tools); `template --with-reader` writes it. Loading is unchanged: a map with no
+  `reader` uses DEFAULT_READER (tab, utf-8-sig); `--delimiter`/`--encoding` still override. 96 tests pass.
+  EBSCOnet pin stays v0.3.4 (adapter does not use template). Untracked `map.json` in the repo root is
+  not ours; left alone.
 - Installer (`install.sh`, repo root): downloads one release tarball via the GitHub API
   (`GITHUB_TOKEN` required, repo is private; read-only fine-grained token, Contents: read),
   pip-installs it into `<dir>/venv` (default `~/folio-orders-loader`), links `folio-orders-loader`
