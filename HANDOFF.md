@@ -155,6 +155,46 @@ https://github.com/folio-org/acq-models mod-orders-storage/schemas/po_line.json)
 Also unbuilt: address name -> UUID lookup for bill_to/ship_to, an "open order" step, PO-level
 acqUnitIds, poNumberPrefix/Suffix, assignedTo, template, manualPo, reEncumber, customFields.
 
+## Not done, and recommendations (2026-09-30, after group 5)
+
+### Not verified
+- No live bugfest check for ANY of groups 1-5, nor for payment_status, vendor reference numbers,
+  notes/tags/bill_to/ship_to (bugfest login returned 503). Group 1 scratch map/data: /tmp/g1.
+  For each group: dry run, --live one PO, export, confirm the FOLIO fields, delete.
+- Not released: groups 1-5 are committed locally only (latest 0051a41). Still to do after the
+  live checks: bump pyproject to v0.3.0, tag, push, update the EBSCOnet pin in requirements.txt.
+- EBSCOnet adapter not re-run live with the new loader fields.
+- Group 4/5 dates are sent as `YYYY-MM-DDT00:00:00.000+00:00`; FOLIO acceptance is untested.
+- Group 4 `user_limit`/`trial`/`resource_url` are not rejected on physical-only lines (the
+  builder just ignores them); same for `volumes`/`material_supplier_code` on electronic lines.
+
+### Deliberately not built (group 5 leftovers)
+- `paymentTerms` (multi-year prepayment object), `customFields`, `claims` (array of claim
+  records), `locations` receipt/other sub-fields, `eresource.license`, `expectedActivation`,
+  `activationDue`, `eresource.materialType`, `physical.receiptDue`, `physical.createInventory`
+  other than "None", `checkinItems` (always false), `source` (always "User").
+- PO level: address name -> UUID lookup (bill_to/ship_to), acqUnitIds, poNumberPrefix/Suffix,
+  assignedTo, template, manualPo, reEncumber, customFields, and an "open order" step
+  (loader is Pending-only).
+
+### Recommended additions, in priority order
+1. **`create_inventory`** (eresource and physical; "None" / "Instance" / "Instance, Holding" /
+   "Instance, Holding, Item"). Hardcoded to "None" today; real migrations nearly always need it.
+   Small change: enum check in records.py, one key.
+2. **PO-level `acq_unit_codes`** (acqUnitIds, via a /acquisitions-units/units lookup). Tenants
+   commonly restrict POs by acquisition unit, so the load fails or the PO is invisible without it.
+3. **`checkin_items`** (boolean). Needed to receive serials/ongoing lines by check-in; one key.
+4. **`activation_due` / `expected_activation`** and **`receipt_due`**. Cheap, round out the
+   electronic/physical receiving dates.
+5. **Address name -> UUID lookup** for bill_to/ship_to, so customers do not hand-copy UUIDs.
+   First find where this tenant stores addresses.
+6. **Open-order step** (workflowStatus Open) once encumbrance behavior is decided; large, own session.
+7. **`po_number_prefix`/`suffix`, `manual_po`, `re_encumber`, `assigned_to`**: small PO-level
+   keys; add only when a customer asks.
+8. **`customFields`, `paymentTerms`, `claims`**: skip unless a customer needs them; tenant
+   specific and schema-heavy.
+9. Reject electronic-only keys on physical lines (and vice versa) in `validate_line`.
+
 ## Working notes
 - Keep sessions short and single-purpose; start a fresh one for each Next item using this file.
 - Run only relevant tests with `| tail`; delegate broad searches to an Explore agent.
