@@ -40,6 +40,8 @@ def build_parser():
 
     s = sub.add_parser("template", help="write a blank mapping file")
     s.add_argument("--out", help="output file (default: stdout)")
+    s.add_argument("--with-reader", action="store_true",
+                   help="include the reader block (delimiter/encoding defaults)")
 
     s = sub.add_parser("delete", help="delete Pending POs/lines listed in a CSV")
     s.add_argument("csv")
@@ -87,7 +89,7 @@ def _write_csv(path, header, rows):
 
 
 def cmd_template(args):
-    text = json.dumps(mapping.template(), indent=2)
+    text = json.dumps(mapping.template(args.with_reader), indent=2)
     if args.out:
         Path(args.out).write_text(text + "\n", encoding="utf-8")
         print("wrote", args.out)

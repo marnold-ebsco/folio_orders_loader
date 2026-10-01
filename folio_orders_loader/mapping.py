@@ -80,13 +80,18 @@ def _describe(name):
     return ""
 
 
-def template():
-    """Blank map with every known neutral key unmapped."""
+def template(with_reader=False):
+    """Blank map with every known neutral key unmapped.
+
+    The ``reader`` block is omitted unless ``with_reader``; DEFAULT_READER applies.
+    """
     names = list(REQUIRED) + list(OPTIONAL) + [
         f"{group}[0].{key}" for group, keys in REPEATING.items() for key in keys]
-    return {"reader": dict(DEFAULT_READER), "data": [
-        {"folio_field": n, "legacy_field": NOT_MAPPED, "value": "",
-         "description": _describe(n)} for n in names]}
+    data = [{"folio_field": n, "legacy_field": NOT_MAPPED, "value": "",
+             "description": _describe(n)} for n in names]
+    if with_reader:
+        return {"reader": dict(DEFAULT_READER), "data": data}
+    return {"data": data}
 
 
 def load_map(path):

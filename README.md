@@ -16,7 +16,8 @@ python -m folio_orders_loader delete to_delete.csv --ini tenant.ini [--live]
 * `validate` never POSTs. It checks the map, the data (PO number format, required fields,
   lines of one PO agreeing on PO-level fields) and, with `--ini`, that every vendor, fund,
   expense class, location, material type, identifier type and acquisition method resolves.
-* `--delimiter` (e.g. `\t`) and `--encoding` override the map's `reader` settings.
+* `--delimiter` (e.g. `\t`) and `--encoding` override the map's optional `reader` block. Without
+  one the defaults are tab-delimited `utf-8-sig`; `template --with-reader` writes the block out.
 * `delete` only removes **Pending** orders, saves each as JSON in `--backup-dir` first, and
   refuses lists longer than `--max`. CSV columns: `type,number,note` (`PO` or `POL`).
 * The `.ini` file holds `okapiUrl`, `tenant_id`, `username`, `password`, `sslVerify`. Never commit
@@ -30,7 +31,7 @@ repo is never cloned onto the host. The repo is private: set `GITHUB_TOKEN` to a
 fine-grained token (Contents: read on this repo).
 
 ```
-GITHUB_TOKEN=ghp_xxx bash install.sh -v v0.3.4      # -v latest (default), -d install dir, -b link dir
+GITHUB_TOKEN=ghp_xxx bash install.sh -v v0.3.5      # -v latest (default), -d install dir, -b link dir
 ```
 
 Needs Python 3.12+ and curl. It links `folio-orders-loader` into `/usr/local/bin` (or

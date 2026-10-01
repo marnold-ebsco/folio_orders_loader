@@ -6,7 +6,15 @@ from folio_orders_loader import cli, tools
 def test_template_writes_map(tmp_path, capsys):
     out = tmp_path / "map.json"
     assert cli.main(["template", "--out", str(out)]) == 0
-    assert json.loads(out.read_text())["data"]
+    got = json.loads(out.read_text())
+    assert got["data"]
+    assert "reader" not in got
+
+
+def test_template_with_reader(tmp_path):
+    out = tmp_path / "map.json"
+    assert cli.main(["template", "--out", str(out), "--with-reader"]) == 0
+    assert json.loads(out.read_text())["reader"]["delimiter"] == "	"
 
 
 def test_validate_reports_map_problems(tmp_path, capsys):
