@@ -132,11 +132,17 @@ https://github.com/folio-org/acq-models mod-orders-storage/schemas/po_line.json)
    at /tmp/g1 (PO ZTG1001, P/E Mix, 60/40 TEST-ELEC/TEST-PRINT, qty 3/2, discount 10%, additional
    cost 4); dry run, --live, export, delete. Also bump version/tag v0.3.0 and update the EBSCOnet pin
    after the live check.
-2. **Bibliographic** (NEXT; follow the group-1 pattern: add a `contributors` entry to
+2. **Bibliographic**: CODED and COMMITTED locally (a31b7ec, not pushed/tagged), 46 tests pass, flake8 clean,
+   README updated. Neutral keys: `contributors[n].name/.type` (type = contributor name type name,
+   looked up via `Resolver.contributor_name_type` on /contributor-name-types), `edition`,
+   `publication_date` (free text). LIVE CHECK PENDING: load a line with two contributors
+   (e.g. Personal name, Corporate name), export, confirm contributors/edition/publicationDate, delete.
+   Group 1 live check also still pending; then bump to v0.3.0, tag, push, update the EBSCOnet pin.
+   (Original brief, kept for reference: follow the group-1 pattern: add a `contributors` entry to
    records.REPEATING with sub-keys name/type, validate in records.py, build in builder.py, map in
    mapping.py via REPEATING_RE, tests in tests/, README section; contributor name type needs a
    Resolver lookup by name against /contributor-name-types): contributors (name + contributor name type), edition, publicationDate.
-3. **People/flags/tags**: line-level tags, requester, selector, rush.
+3. **People/flags/tags** (NEXT): line-level tags, requester, selector, rush.
 4. **Electronic extras**: eresource.resourceUrl, userLimit, trial; physical volumes,
    materialSupplier, expectedReceiptDate; details receivingNote, isAcknowledged,
    subscriptionInterval, productIds qualifier; receiptDate; renewalNote, cancellationRestrictionNote.
