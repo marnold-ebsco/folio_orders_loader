@@ -1,11 +1,11 @@
-# Handoff (2026-10-01): folio_orders_loader v0.3.0 released
+# Handoff (2026-10-01): folio_orders_loader v0.3.1 released
 
 This file covers the loader package only. The EBSCOnet side (adapter, `ebsconet.py` workflow,
 `api-load-default` branch, vendor accounts, real-tenant test) is tracked in
 `~/scratch/EBSCOnet/HANDOFF.md`; read that for EBSCOnet work.
 
 ## What the loader owes EBSCOnet (cross-project facts)
-- EBSCOnet depends on this package by git tag (`requirements.txt` pins `@v0.3.0`, 84a99ac).
+- EBSCOnet depends on this package by git tag (`requirements.txt` pins `@v0.3.0`, 84a99ac; bump to `@v0.3.1`, 636fd9a).
   Installing in EBSCOnet's venv does not auto-upgrade: after a pin bump run
   `.venv/bin/pip install --force-reinstall --no-deps` on the requirements line.
 - The EBSCOnet adapter emits neutral line records (`records.py`) and bypasses the mapping file.
@@ -20,7 +20,7 @@ This file covers the loader package only. The EBSCOnet side (adapter, `ebsconet.
 **We work in Linux (WSL Ubuntu), not Windows.** Work in WSL `~/scratch/folio_orders` (run via
 `wsl.exe -e bash -lc`; write files through the `\\wsl.localhost\Ubuntu-24.04\home\marnold\...`
 path, not bash heredocs, which mangle backticks; for Python with quotes write a script file).
-Venv: `.venv/bin/python`. 90 pytest tests pass; flake8 clean (`--max-line-length=100`).
+Venv: `.venv/bin/python`. 93 pytest tests pass; flake8 clean (`--max-line-length=100`).
 
 Background: `FINDINGS.md` (spike results, verdict GO), `API_SPIKE.md` (original brief), the plan
 `C:\Users\marnold\.claude\plans\idempotent-crafting-rivest.md`, and `README.md` (field reference,
@@ -44,6 +44,8 @@ Background: `FINDINGS.md` (spike results, verdict GO), `API_SPIKE.md` (original 
   VERIFIED LIVE on bugfest (load, export, compare, delete).
 - v0.3.0 released 2026-10-01 (commit 53a6323, tag pushed). EBSCOnet's 188 tests passed against
   the tag when it was pinned.
+- v0.3.1 released 2026-10-01 (commit 636fd9a, tag pushed): expense class is optional (see below).
+  Unit-tested only; not run against bugfest.
 
 ## Live-verified (bugfest, 2026-09-30 / 10-01)
 - Everything in the field groups, incl. acquisition units (Law, user is a member now), address
@@ -71,25 +73,23 @@ Background: `FINDINGS.md` (spike results, verdict GO), `API_SPIKE.md` (original 
   P/E Mix allows both. `material_type` and `access_provider_code` are deliberately not checked
   by `validate_line` (material type is still resolved at build time).
 
-## NEXT (for the loader-CLI session): make the expense class optional, release v0.3.1
-Found 2026-10-01 from the EBSCOnet side. FOLIO does not require expense classes, but the loader
-does, so a tenant that does not use them cannot be loaded:
-- `records.py` `_check_funds` (lines ~97-108) marks a line `invalid` when `fund_code` /
-  `expense_class_code` is missing, and per `fund_distribution` entry ("missing expense_class_code").
-  `FUND_FIELDS = ("fund_code", "expense_class_code")` (line 21) is used for the check.
-- `builder.py` `build_line` (line ~16) always calls `r.expense_class(...)` and sets
-  `expenseClassId`; with a blank code `lookups._q(None)` would query `code=="None"`.
-- `budgets.py` `check_budgets` always resolves the class and compares it to the budget's Active
-  `statusExpenseClasses`.
-- Wanted: blank class is allowed (fund still required): no `expenseClassId` in the payload, no
-  "missing" problem, and `check_budgets` keeps the "no Active budget" check but skips the class
-  half. A class that IS given must still resolve and be Active on the budget. Add unit tests
-  (records, builder, budgets), update README ("Known gaps"/field reference), tag v0.3.1.
-- Then in EBSCOnet (`~/scratch/EBSCOnet`, see its HANDOFF.md): bump the `requirements.txt` pin
-  and make `pipeline/folio_orders_adapter.py` honour `rules.use_expense_classes: false`. It
-  currently falls back to `default_expense_class` for a blank cell (line ~43), so a tenant
-  without classes still gets one put on the lines, or all POs go `invalid` if the default is
-  empty. README_API.md already claims "no class is put on the lines".
+## Expense class is optional (v0.3.1, done)
+FOLIO does not require expense classes. A blank class is now allowed (fund still required):
+- `records.py` no longer reports a missing expense class; `FUND_FIELDS` is now `("fund_code",)`.
+- `builder.py` omits `expenseClassId` from the fund distribution when the code is blank.
+- `budgets.py` keeps the "no Active budget" check but skips the class half for a blank class.
+  A class that IS given must still resolve and be Active on the budget.
+- README fund shorthand text updated; tests added in test_budgets, test_builder,
+  test_funds_locations.
+
+## NEXT (for the EBSCOnet session, `~/scratch/EBSCOnet`, see its HANDOFF.md)
+- Bump the `requirements.txt` pin to `@v0.3.1`, then
+  `.venv/bin/pip install --force-reinstall --no-deps` on that line.
+- Make `pipeline/folio_orders_adapter.py` honour `rules.use_expense_classes: false`. It currently
+  falls back to `default_expense_class` for a blank cell (line ~43), so a tenant without classes
+  still gets one put on the lines, or all POs go `invalid` if the default is empty.
+  README_API.md already claims "no class is put on the lines".
+- Optionally run a no-class PO against bugfest to confirm FOLIO accepts it.
 
 ## Not done
 - `open-error` path exercised by unit tests only (see gotchas); the user will exercise
