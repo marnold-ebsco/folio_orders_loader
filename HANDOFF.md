@@ -72,6 +72,9 @@ Venv: `.venv/bin/python`.
    "Vendor title number" is a reference type, probably what "title number" meant), 31 tests
    pass, README updated. LIVE CHECK PENDING (bugfest login 503): load one PO with both,
    export it, confirm paymentStatus and vendorDetail.referenceNumbers, delete it.
+   PO-level `notes`, `tags` ({tagList}), `bill_to`, `ship_to` (address UUIDs, not looked up)
+   also CODED (2026-09-30, 33 tests); same pending live check. Address names -> UUID lookup
+   not built (find where the tenant keeps addresses first).
 4. Commit: DONE locally (2026-09-30): git init (branch main), commit 43d13d5, tag v0.1.0. NOT pushed:
    GitHub remote `marnold-ebsco/folio_orders_loader` not created/added yet.
 5a. EBSCONET adapter written locally (uncommitted, in ~/scratch/EBSCOnet): pipeline/folio_orders_adapter.py

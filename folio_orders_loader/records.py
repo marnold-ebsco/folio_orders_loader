@@ -19,7 +19,8 @@ REQUIRED = ("po_number", "vendor_code", "title", "order_format", "cost",
 
 # Fields that must agree on every line of one PO.
 PO_LEVEL = ("vendor_code", "order_type", "interval_days", "is_subscription",
-            "manual_renewal", "renewal_date")
+            "manual_renewal", "renewal_date", "notes", "tags", "bill_to", "ship_to")
+UUID_RE = re.compile(r"^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$", re.I)
 
 
 def validate_line(line):
@@ -45,6 +46,9 @@ def validate_line(line):
             problems.append(f"vendor_reference_type {ref_type!r} not in {REFERENCE_TYPES}")
     elif line.get("vendor_reference_type"):
         problems.append("vendor_reference_type given without vendor_reference_number")
+    for key in ("bill_to", "ship_to"):
+        if line.get(key) and not UUID_RE.match(str(line[key])):
+            problems.append(f"{key} {line[key]!r} must be an address UUID")
     fmt = line.get("order_format")
     if fmt in ("Physical Resource", "P/E Mix") and not line.get("material_type"):
         problems.append("material_type required for physical lines")

@@ -63,6 +63,10 @@ Pending, Awaiting Receipt, Partially Received, Fully Received, Receipt Not Requi
 Cancelled; anything else is an error) and `vendor_account` (vendorDetail.vendorAccount) are
 written when present.
 
+PO-level optional fields (must agree on every line of a PO): `notes` and `tags` (a list, or one
+string with items separated by `|`), and `bill_to` / `ship_to` (the address UUID from the
+tenant's address settings; names are not looked up).
+
 Also optional: `payment_status` (one of Awaiting Payment, Cancelled, Fully Paid, Partially Paid,
 Payment Not Required, Pending, Ongoing) and a vendor reference number, given as
 `vendor_reference_number` plus `vendor_reference_type` (one of Vendor continuation reference

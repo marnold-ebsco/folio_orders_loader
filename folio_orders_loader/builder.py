@@ -79,6 +79,13 @@ def renewal_date(lines):
     return max(dates) if dates else None
 
 
+def as_list(value):
+    """A list as is, or a '|'-separated string split into non-empty trimmed items."""
+    if isinstance(value, str):
+        value = value.split("|")
+    return [str(v).strip() for v in value or [] if str(v).strip()]
+
+
 def build_order(po_number, lines, r):
     first = lines[0]
     order = {
@@ -88,6 +95,16 @@ def build_order(po_number, lines, r):
         "workflowStatus": "Pending",
         "compositePoLines": [build_line(ln, r) for ln in lines],
     }
+    notes = as_list(first.get("notes"))
+    if notes:
+        order["notes"] = notes
+    tags = as_list(first.get("tags"))
+    if tags:
+        order["tags"] = {"tagList": tags}
+    if first.get("bill_to"):
+        order["billTo"] = first["bill_to"]
+    if first.get("ship_to"):
+        order["shipTo"] = first["ship_to"]
     if first["order_type"] == "Ongoing":
         ongoing = {
             "interval": int(first["interval_days"]),

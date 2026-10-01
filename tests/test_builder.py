@@ -149,3 +149,24 @@ def test_bad_payment_status_and_reference_type_rejected():
                for p in validate_line(line(vendor_reference_number="1")))
     orphan = line(vendor_reference_type="Vendor title number")
     assert any("without" in p for p in validate_line(orphan))
+
+
+ADDR = "11111111-2222-4333-8444-555555555555"
+
+
+def test_po_notes_tags_bill_to_ship_to():
+    from folio_orders_loader.lookups import Resolver
+    extra = {"notes": "First | Second", "tags": ["migrated", "ebsconet"],
+             "bill_to": ADDR, "ship_to": ADDR}
+    order = build_order("P1", [line(**extra)], Resolver(FakeClient()))
+    assert order["notes"] == ["First", "Second"]
+    assert order["tags"] == {"tagList": ["migrated", "ebsconet"]}
+    assert order["billTo"] == ADDR and order["shipTo"] == ADDR
+    bare = build_order("P1", [line()], Resolver(FakeClient()))
+    assert not {"notes", "tags", "billTo", "shipTo"} & set(bare)
+
+
+def test_bill_to_must_be_uuid_and_po_level_must_agree():
+    assert any("bill_to" in p for p in validate_line(line(bill_to="Main Library")))
+    _, problems = group_by_po([line(notes="a"), line(notes="b")])
+    assert any("notes" in m for m in problems["P1"])
