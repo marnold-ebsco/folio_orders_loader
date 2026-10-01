@@ -233,3 +233,51 @@ Live checks pending for all (and groups 1-6 generally); then v0.3.0, tag, push, 
 - Pushed to origin/main. Next: retry bugfest (live checks groups 1-6, addresses endpoint,
   `--open`), then v0.3.0, tag, push, bump the EBSCOnet pin, re-run the adapter live.
 
+## Live checks on bugfest (2026-10-01) - supersedes the "pending" notes above
+Bugfest was back up. Scratch map/data lived in the session scratchpad; every test PO was deleted.
+
+### Verified live (load, export, compare each field, delete)
+- Groups 1-4 and the earlier fields: 60/40 fund split, two locations, quantities, contributors,
+  edition, publication date, cost/discount/additional cost, `$1,234.50` money, line tags,
+  requester, selector, rush, resource_url, user_limit, trial, volumes, material supplier,
+  receiving note, is_acknowledged, subscription_interval, renewal/cancellation notes, ISSN
+  qualifier, automatic_export, collection, claiming_active/interval, donor, create_inventory
+  (electronic "Instance, Holding", physical "Instance"), checkin_items, payment_status,
+  vendor reference number + type, PO notes/tags, `multi_year_payment`, `is_package`.
+- Dates (`...T00:00:00.000+00:00`) accepted: receipt_date, expected_receipt_date,
+  expected_activation, activation_due, receipt_due.
+- Address name -> UUID: works for bill_to/ship_to via the mod-configuration fallback
+  (bugfest keeps addresses in `tenant.addresses`; mod-settings returned nothing).
+- `--open`: PO ends Open. `delete` skips Open POs by design; to clean up, PUT the PO back to
+  Pending, then delete.
+- Validation correctly rejects physical-only keys on electronic lines (and vice versa).
+
+### Bug found and fixed
+- `suppress_from_discovery` (-> `suppressInstanceFromDiscovery`) is rejected by bugfest's
+  composite PO line as an unrecognized field, failing the whole PO. REMOVED from records.py,
+  mapping.py and README (commit 4817f69, pushed). 90 tests pass, flake8 clean.
+
+### Not fully verified / still to do
+- **Acquisition units**: the name lookup (`acq_unit_names`) resolves, but the PO was refused
+  (`userNotAMemberOfTheAcq`) because the user was not in the "Law" unit. **The user is now part
+  of the Law acquisitions unit, so re-run this check**: load a PO with `acq_unit_names` = Law,
+  export, confirm `acqUnitIds`, delete.
+- `po_number_prefix`: the prefix "KS" does not exist on the tenant (`prefixNotFound`, a clean
+  error). Retry with a prefix that exists; `po_number_suffix`, `manual_po`, `re_encumber`,
+  `assigned_to` not exercised.
+- `package_po_line_id`, `instance_id`, `agreement_id` (need real UUIDs) and
+  `donor_organization_codes` not exercised.
+- Receipt status other than Pending, payment status other than Pending, and
+  `exchange_rate` not exercised.
+- Over-budget / budget checks and `--open` failure path (open-error) not exercised.
+- Electronic lines with a quantity need a location (`electronicLocCostQtyMismatch` otherwise);
+  consider a validate rule that flags quantity without a matching location.
+- EBSCOnet adapter live re-run with the new loader fields: STARTED 2026-10-01 (140 POs from
+  `out/three_type_test`); see the result line below if it was recorded. After it, spot-check one
+  PO in the FOLIO UI and delete all 140 with JSON backups outside the repo
+  (`~/scratch/ebsconet_bugfest_backup_*`).
+- Release (only after the above): bump pyproject to v0.3.0, tag, push, update the pin in
+  `~/scratch/EBSCOnet/requirements.txt`, rerun EBSCOnet tests.
+- Open question carried over: whether `out/three_type_test/*.xlsx` hold synthetic or
+  real-derived orders (PO numbers look real, e.g. M2822798).
+
