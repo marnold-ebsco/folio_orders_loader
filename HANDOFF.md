@@ -9,10 +9,11 @@ This file covers the loader package only. The EBSCOnet side (adapter, `ebsconet.
   Installing in EBSCOnet's venv does not auto-upgrade: after a pin bump run
   `.venv/bin/pip install --force-reinstall --no-deps` on the requirements line.
 - The EBSCOnet adapter emits neutral line records (`records.py`) and bypasses the mapping file.
-- The adapter dry run does NOT call `budgets.check_budgets`; only the loader CLI `validate`
-  does (cli.py). A fund with no Active budget / unlisted expense class is therefore caught
-  only at `--live` (`budgetExpenseClassNotFound`). Possible follow-up: expose a budget check
-  the adapter can call from its dry run.
+- `loader.load()` does not call `budgets.check_budgets`; only the loader CLI `validate` does
+  (cli.py). The EBSCOnet adapter calls `check_budgets` itself on its dry run
+  (`check_dry_run_budgets`, EBSCOnet 2026-10-01), so no loader change or release was needed.
+  Library users calling `load()` directly still only see a budget problem at `--live`
+  (`budgetExpenseClassNotFound`). Possible follow-up: an opt-in `check_budget` option on `load()`.
 - Lookups (`lookups.py` Resolver) raise `LookupError_` for organization, fund, expense class,
   location and material type, which `loader.load` reports as `lookup-failed`.
 
