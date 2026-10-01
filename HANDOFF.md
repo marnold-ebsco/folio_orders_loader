@@ -56,7 +56,8 @@ Background: `FINDINGS.md` (spike results, verdict GO), `API_SPIKE.md` (original 
   EBSCOnet pin stays v0.3.4 (adapter does not use template). Untracked `map.json` in the repo root is
   not ours; left alone.
 - Installer (`install.sh`, repo root; rewritten after v0.3.5 in the style of
-  `marnold-ebsco/marc-repair/install.sh`, NOT yet released/tagged): the repo is PUBLIC, so no token.
+  `marnold-ebsco/marc-repair/install.sh`; pushed to main in 4bf42c8, NOT tagged: tags v0.3.3-v0.3.5 still
+  carry the old token/tarball script, so install from `main`): the repo is PUBLIC, so no token.
   Fetches only the package files + pyproject/README via raw.githubusercontent.com pinned to the
   commit SHA of `--ref` (default main), writes `.folio_orders_loader_install_version`, builds
   `<dir>/venv` and `pip install --editable <dir>` (pulls folioclient). Options: `--dir` (default
@@ -64,8 +65,8 @@ Background: `FINDINGS.md` (spike results, verdict GO), `API_SPIKE.md` (original 
   PATH symlink (activate the venv). If a module is added to `folio_orders_loader/`, add it to the
   `FILES` array in install.sh. The earlier token/tarball design (v0.3.3-v0.3.5 tags, `-v/-d/-b`
   flags) is superseded; those tags still carry it. Tested in WSL 2026-10-01 with `--ref v0.3.5`
-  (fresh install, `--check` up to date, `--check` against another ref reports update). NOT tested
-  on a real EC2, without python3-venv, or the `curl | bash` form (needs the script on main).
+  (fresh install, `--check` up to date, `--check` against another ref reports update). The
+  `curl | bash` form from main also verified (4bf42c8). NOT tested on a real EC2 or without python3-venv.
 - Live-verified on bugfest 2026-10-01: a PO with a blank expense class loads, and opens with --open
   (export shows no expenseClassId). Deleted afterwards (Open POs must be PUT back to Pending first).
 
@@ -109,7 +110,8 @@ FOLIO does not require expense classes. A blank class is now allowed (fund still
   change are done (see EBSCOnet HANDOFF).
 - Optional: switch the EBSCOnet adapter to load(check_budget=True) instead of its own check_dry_run_budgets;
   bump its pin to v0.3.2 if so.
-- Commit/push the new `install.sh` + README, then run it on a real EC2 via `curl | bash` (only WSL tested so far).
+- Run the `curl | bash` installer on a real EC2 (only WSL tested so far). Optionally tag a release (v0.3.6)
+  so tags carry the new installer.
 - Untested: a fund with no budget on a real tenant, and over-budget behaviour (bugfest allows overspend).
 
 ## Not done
