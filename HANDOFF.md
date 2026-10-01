@@ -206,8 +206,10 @@ name is used; Resolver.acquisition_unit queries /acquisitions-units/units by nam
 - Test data and maps for live runs go in the session scratchpad, not the repo.
 
 ## Group 6 items 4-7 (2026-09-30): CODED, 69 tests, flake8 clean, README updated; NOT live-checked
-4. ,  (days), . 5. ;
-bill_to/ship_to accept a name or UUID (settings entries first, mod-configuration fallback;
-UNVERIFIED which this tenant uses). 6.  / : GET the created
-PO, set workflowStatus Open, PUT; failure -> , PO stays Pending. 7. ,
-, , , . Live checks pending for all.
+4. ,  (days), .
+5. ; bill_to/ship_to accept a name or UUID (mod-settings entries first,
+   mod-configuration fallback; UNVERIFIED which this tenant uses).
+6.  / : GET the created PO, set workflowStatus Open, PUT;
+   failure -> , PO stays Pending.
+7. , , , , .
+Live checks pending for all (and groups 1-6 generally); then v0.3.0, tag, push, EBSCOnet pin.
