@@ -217,3 +217,19 @@ name is used; Resolver.acquisition_unit queries /acquisitions-units/units by nam
 7. `po_number_prefix`, `po_number_suffix`, `manual_po`, `re_encumber`, `assigned_to`.
 Live checks pending for all (and groups 1-6 generally); then v0.3.0, tag, push, EBSCOnet pin.
 
+## Later the same day (2026-09-30)
+- Item 9 DONE (see list above). README has a "Known gaps" section (PO/line fields not set,
+  unverified-live items) and a "Kitchen-sink fixture" section under Development.
+- Kitchen-sink fixture: `tests/kitchen_sink_data.py` (generator; EXPECTED status per PO),
+  `tests/fixtures/kitchen_sink.tsv` + `kitchen_sink_map.json`, `tests/test_kitchen_sink.py`.
+  Synthetic data only. 90 tests pass, flake8 clean. Fake client, so it proves our logic, not
+  FOLIO. Not covered: budget checks, `--open` failures, delete/export. Mutation-checked
+  (breaking the fund-percentage rule makes it fail).
+- EBSCOnet: its 188 tests pass against both the pinned v0.2.0 and the working-tree loader.
+  Adapter dry run against bugfest FAILED: login returned 503 (server side), after the
+  workbooks had been read into 140 line records. Not yet retried.
+- UNCHECKED: whether `~/scratch/EBSCOnet/out/three_type_test/*.xlsx` hold synthetic or
+  real-derived orders (PO numbers looked real, e.g. M2822798). Open them before reusing.
+- Pushed to origin/main. Next: retry bugfest (live checks groups 1-6, addresses endpoint,
+  `--open`), then v0.3.0, tag, push, bump the EBSCOnet pin, re-run the adapter live.
+

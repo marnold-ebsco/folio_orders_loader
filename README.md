@@ -195,3 +195,28 @@ python -m venv .venv && .venv/bin/pip install -e .[dev]
 .venv/bin/python -m pytest tests -q
 .venv/bin/flake8 --max-line-length=100 folio_orders_loader tests
 ```
+
+### Kitchen-sink fixture
+
+`tests/kitchen_sink_data.py` generates a synthetic end-to-end fixture (all data invented,
+nothing from real orders), in the spirit of marc_repair's kitchen sink:
+
+```
+python tests/kitchen_sink_data.py     # rewrites tests/fixtures/kitchen_sink.tsv + _map.json
+```
+
+One PO per behavior, numbered by outcome: `KS0xx` created (minimal, physical, multi-line P/E
+Mix, two funds and locations with contributors, case-insensitive translate, rules and
+date_format, notes/tags/address/prefix, booleans, physical-only keys); `KS1xx` rejected by
+validation (missing title, bad PO number, funds not summing to 100, location quantity mismatch,
+wrong-format key, Ongoing without interval, bad receipt/payment status, lines disagreeing on
+vendor, physical line without material type); `KS2xx` mapping errors (translate miss, bad
+date); `KS301` vendor not in the tenant (`lookup-failed`); `KS401` already exists; `KS501`
+FOLIO rejects the POST. The expected status per PO lives in `EXPECTED` in the generator.
+
+`tests/test_kitchen_sink.py` maps the file and loads it against a fake client, and checks: each
+PO's status, validation flags exactly the invalid POs, a dry run posts nothing, a re-run skips
+what was created, a rejected PO does not stop the run, built orders carry the mapped values, and
+the committed fixture still matches the generator. It does not exercise FOLIO itself, budget
+checks, `--open` failures, or the delete/export tools. Add a case by appending to `CASES`,
+re-running the generator, and committing the regenerated files.
