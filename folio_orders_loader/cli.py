@@ -30,6 +30,8 @@ def build_parser():
     _add_input(s)
     s.add_argument("--ini", required=True)
     s.add_argument("--live", action="store_true", help="actually POST (default: dry run)")
+    s.add_argument("--open", action="store_true", dest="open_orders",
+                   help="with --live, open each PO after creating it (needs budget)")
     s.add_argument("--log", help="write a CSV result log here")
 
     s = sub.add_parser("validate", help="check map, data and tenant codes; no POST")
@@ -137,12 +139,12 @@ def cmd_load(args):
         return 1
     client = connect(args.ini)
     print("%d line(s); %s" % (len(lines), "LIVE - POSTING" if args.live else "dry run"))
-    results = load(client, lines, live=args.live)
+    results = load(client, lines, live=args.live, open_orders=args.open_orders)
     for po, status, detail in results:
         print("%-22s %-13s %s" % (po, status, detail))
     if args.log:
         _write_csv(args.log, ["po_number", "status", "detail"], results)
-    bad = {"invalid", "lookup-failed", "error"}
+    bad = {"invalid", "lookup-failed", "error", "open-error"}
     return 1 if any(r[1] in bad for r in results) else 0
 
 

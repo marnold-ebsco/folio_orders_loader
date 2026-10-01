@@ -166,7 +166,6 @@ def test_po_notes_tags_bill_to_ship_to():
     assert not {"notes", "tags", "billTo", "shipTo"} & set(bare)
 
 
-def test_bill_to_must_be_uuid_and_po_level_must_agree():
-    assert any("bill_to" in p for p in validate_line(line(bill_to="Main Library")))
+def test_po_level_must_agree():
     _, problems = group_by_po([line(notes="a"), line(notes="b")])
     assert any("notes" in m for m in problems["P1"])

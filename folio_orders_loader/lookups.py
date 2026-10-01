@@ -1,4 +1,8 @@
 """Resolve codes/names to FOLIO ids, cached per run."""
+import json
+import re
+
+UUID_RE = re.compile(r"^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$", re.I)
 
 
 class LookupError_(Exception):
@@ -37,6 +41,40 @@ class Resolver:
     def acquisition_unit(self, name):
         return self._one("/acquisitions-units/units", "acquisitionsUnits",
                          "name==" + _q(name))["id"]
+
+    def address(self, value):
+        """Address UUID for a tenant address name; a UUID passes through.
+
+        Addresses live in mod-settings (scope ui-tenant-settings.settings.addresses)
+        or, on older tenants, mod-configuration (tenant.addresses, JSON value).
+        """
+        if UUID_RE.match(str(value)):
+            return str(value)
+        if "addresses" not in self._cache:
+            self._cache["addresses"] = self._load_addresses()
+        found = self._cache["addresses"].get(str(value).strip().lower())
+        if not found:
+            raise LookupError_(f"not found: address named {value!r}")
+        return found
+
+    def _load_addresses(self):
+        names = {}
+        try:
+            for e in self.client.folio_get(
+                    "/settings/entries", key="items", query_params={
+                        "query": "scope==ui-tenant-settings.settings.addresses",
+                        "limit": 200}):
+                names[str(e["value"].get("name", "")).strip().lower()] = e["id"]
+        except Exception:  # module absent or not permitted: try mod-configuration
+            pass
+        if not names:
+            for e in self.client.folio_get(
+                    "/configurations/entries", key="configs", query_params={
+                        "query": "(module==TENANT and configName==tenant.addresses)",
+                        "limit": 200}):
+                value = json.loads(e["value"])
+                names[str(value.get("name", "")).strip().lower()] = e["id"]
+        return names
 
     def fund(self, code):
         """Return the fund record (id and code)."""

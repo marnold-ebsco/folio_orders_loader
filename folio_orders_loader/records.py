@@ -32,7 +32,8 @@ REPEATING = {
 # Fields that must agree on every line of one PO.
 PO_LEVEL = ("vendor_code", "order_type", "interval_days", "is_subscription",
             "manual_renewal", "renewal_date", "notes", "tags", "bill_to", "ship_to",
-            "acq_unit_names")
+            "acq_unit_names", "po_number_prefix", "po_number_suffix", "manual_po",
+            "re_encumber", "assigned_to")
 LINE_FLAGS = (("automatic_export", "automaticExport"), ("collection", "collection"),
               ("suppress_from_discovery", "suppressInstanceFromDiscovery"),
               ("multi_year_payment", "multiYearPayment"),
@@ -184,9 +185,13 @@ def validate_line(line):
         n = _number(line["claiming_interval"])
         if n is None or n < 0 or n != int(n):
             problems.append("claiming_interval must be a whole number of days")
-    for key in ("bill_to", "ship_to") + tuple(k for k, _ in LINE_UUIDS):
+    for key in ("assigned_to",) + tuple(k for k, _ in LINE_UUIDS):
         if line.get(key) and not UUID_RE.match(str(line[key])):
-            problems.append(f"{key} {line[key]!r} must be an address UUID")
+            problems.append(f"{key} {line[key]!r} must be a UUID")
+    if line.get("activation_due") not in (None, ""):
+        n = _number(line["activation_due"])
+        if n is None or n < 0 or n != int(n):
+            problems.append("activation_due must be a whole number of days")
     fmt = line.get("order_format")
     if fmt in ("Physical Resource", "P/E Mix") and not line.get("material_type"):
         problems.append("material_type required for physical lines")

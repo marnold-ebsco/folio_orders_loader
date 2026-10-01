@@ -104,6 +104,16 @@ when the order is opened; both default to None. `checkin_items` (boolean) turns 
 receiving. `acq_unit_names` (PO level, `|`-separated) are acquisition unit names, looked up to
 `acqUnitIds`; units have no code, so the name is used.
 
+### Receiving dates, PO-level keys, addresses, opening
+
+Electronic lines: `expected_activation` (date), `activation_due` (whole days). Physical
+lines: `receipt_due` (date). PO level (must agree on every line of a PO): `po_number_prefix`,
+`po_number_suffix`, `manual_po` and `re_encumber` (booleans), `assigned_to` (user UUID, not
+looked up). `bill_to` / `ship_to` now take a tenant address NAME (looked up in mod-settings
+`ui-tenant-settings.settings.addresses`, falling back to mod-configuration `tenant.addresses`)
+or an address UUID. `load --live --open` sets each created PO to Open afterwards; a PO that
+cannot open (e.g. no budget, over encumbrance) stays Pending and is reported `open-error`.
+
 A `translate` miss or an unparseable date is an **error**: `validate` fails and `load`
 refuses to run until it is fixed.
 

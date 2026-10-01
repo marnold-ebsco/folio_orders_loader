@@ -42,18 +42,22 @@ OPTIONAL = ("fund_code", "expense_class_code", "quantity_physical",
             "claiming_interval", "donor", "donor_organization_codes",
             "instance_id", "agreement_id", "package_po_line_id",
             "create_inventory_physical", "create_inventory_electronic",
-            "checkin_items", "acq_unit_names")
+            "checkin_items", "acq_unit_names", "expected_activation",
+            "activation_due", "receipt_due", "po_number_prefix",
+            "po_number_suffix", "manual_po", "re_encumber", "assigned_to")
 BOOLEAN = ("is_subscription", "manual_renewal", "cancellation_restriction",
            "rush", "trial", "is_acknowledged", "automatic_export",
            "collection", "suppress_from_discovery", "multi_year_payment",
-           "claiming_active", "is_package", "checkin_items")
+           "claiming_active", "is_package", "checkin_items", "manual_po",
+           "re_encumber")
 REPEATING_RE = re.compile(r"^(%s)\[(\d+)\]\.(\w+)$" % "|".join(REPEATING))
 MONEY = ("cost", "discount", "additional_cost", "fund_distribution.value")
 ROW_KEYS = ("folio_field", "legacy_field", "value", "description",
             "fallback_legacy_field", "fallback_value", "translate",
             "rules", "rules_apply_scope", "date_format")
 DATES = ("renewal_date", "subscription_from", "subscription_to",
-         "expected_receipt_date", "receipt_date")
+         "expected_receipt_date", "receipt_date", "expected_activation",
+         "receipt_due")
 RULE_OPS = ("split", "combine", "strip_prefix", "strip_suffix", "upper", "lower")
 NOT_MAPPED = "Not mapped"
 DEFAULT_READER = {"delimiter": "\t", "encoding": "utf-8-sig"}

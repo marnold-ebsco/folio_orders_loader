@@ -130,6 +130,11 @@ def build_line(line, r):
             out["eresource"]["userLimit"] = str(line["user_limit"])
         if line.get("trial"):
             out["eresource"]["trial"] = True
+        if line.get("expected_activation"):
+            out["eresource"]["expectedActivation"] = date_time(
+                line["expected_activation"])
+        if line.get("activation_due") not in (None, ""):
+            out["eresource"]["activationDue"] = int(float(line["activation_due"]))
     if physical:
         out["physical"] = {
             "createInventory": line.get("create_inventory_physical") or "None"}
@@ -140,6 +145,8 @@ def build_line(line, r):
         if line.get("material_supplier_code"):
             out["physical"]["materialSupplier"] = r.organization(
                 line["material_supplier_code"])
+        if line.get("receipt_due"):
+            out["physical"]["receiptDue"] = date_time(line["receipt_due"])
         if line.get("expected_receipt_date"):
             out["physical"]["expectedReceiptDate"] = date_time(
                 line["expected_receipt_date"])
@@ -191,9 +198,17 @@ def build_order(po_number, lines, r):
     if units:
         order["acqUnitIds"] = units
     if first.get("bill_to"):
-        order["billTo"] = first["bill_to"]
+        order["billTo"] = r.address(first["bill_to"])
     if first.get("ship_to"):
-        order["shipTo"] = first["ship_to"]
+        order["shipTo"] = r.address(first["ship_to"])
+    for key, field in (("po_number_prefix", "poNumberPrefix"),
+                       ("po_number_suffix", "poNumberSuffix"),
+                       ("assigned_to", "assignedTo")):
+        if first.get(key):
+            order[field] = first[key]
+    for key, field in (("manual_po", "manualPo"), ("re_encumber", "reEncumber")):
+        if first.get(key):
+            order[field] = True
     if first["order_type"] == "Ongoing":
         ongoing = {
             "interval": int(first["interval_days"]),

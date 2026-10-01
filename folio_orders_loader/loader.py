@@ -33,10 +33,12 @@ def error_message(exc):
     return " ".join(text.split())[:500]
 
 
-def load(client, lines, live=False):
+def load(client, lines, live=False, open_orders=False):
     """Load line records. Returns a list of (po_number, status, detail).
 
-    Status is one of: invalid, exists, lookup-failed, dry-run, created, error.
+    Status is one of: invalid, exists, lookup-failed, dry-run, created, opened,
+    open-error, error. With open_orders (live only) each created PO is then set
+    to Open; a failure leaves it Pending and reports open-error.
     Re-running is safe: POs that already exist are skipped.
     """
     resolver = Resolver(client)
@@ -64,5 +66,16 @@ def load(client, lines, live=False):
             continue
         nums = ",".join(ln["poLineNumber"]
                         for ln in created["compositePoLines"])
+        if open_orders:
+            path = "/orders/composite-orders/%s" % created["id"]
+            try:
+                full = client.folio_get(path)
+                full["workflowStatus"] = "Open"
+                client.folio_put(path, full)
+            except Exception as exc:
+                results.append((po, "open-error", f"{nums}: {error_message(exc)}"))
+                continue
+            results.append((po, "opened", nums))
+            continue
         results.append((po, "created", nums))
     return results
