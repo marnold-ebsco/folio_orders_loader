@@ -1,4 +1,5 @@
 """Build a composite-order payload from grouped line records."""
+from .records import fund_list, location_list, quantities
 
 
 def build_line(line, r):
@@ -6,7 +7,14 @@ def build_line(line, r):
     electronic = fmt in ("Electronic Resource", "P/E Mix")
     physical = fmt in ("Physical Resource", "P/E Mix")
     cost = float(line["cost"])
-    fund = r.fund(line["fund_code"])
+    qty_physical, qty_electronic = quantities(line)
+    distribution = []
+    for f in fund_list(line):
+        fund = r.fund(f["code"])
+        distribution.append({
+            "fundId": fund["id"], "code": fund["code"],
+            "expenseClassId": r.expense_class(f["expense_class_code"]),
+            "distributionType": f["type"], "value": float(f["value"])})
 
     details = {}
     ids = [{"productId": p["value"],
@@ -21,9 +29,17 @@ def build_line(line, r):
 
     price = {"currency": line["currency"]}
     if electronic:
-        price.update(listUnitPriceElectronic=cost, quantityElectronic=1)
+        price.update(listUnitPriceElectronic=cost,
+                     quantityElectronic=qty_electronic)
     if physical:
-        price.update(listUnitPrice=cost, quantityPhysical=1)
+        price.update(listUnitPrice=cost, quantityPhysical=qty_physical)
+    if line.get("discount") not in (None, ""):
+        price["discount"] = float(line["discount"])
+        price["discountType"] = line.get("discount_type") or "amount"
+    if line.get("additional_cost") not in (None, ""):
+        price["additionalCost"] = float(line["additional_cost"])
+    if line.get("exchange_rate") not in (None, ""):
+        price["exchangeRate"] = float(line["exchange_rate"])
 
     out = {
         "titleOrPackage": line["title"],
@@ -32,10 +48,7 @@ def build_line(line, r):
         "source": "User",
         "checkinItems": False,
         "cancellationRestriction": bool(line.get("cancellation_restriction")),
-        "fundDistribution": [{
-            "fundId": fund["id"], "code": fund["code"],
-            "expenseClassId": r.expense_class(line["expense_class_code"]),
-            "distributionType": "percentage", "value": 100}],
+        "fundDistribution": distribution,
         "cost": price,
     }
     if details:
@@ -65,11 +78,13 @@ def build_line(line, r):
     if physical:
         out["physical"] = {"createInventory": "None"}
         out["physical"]["materialType"] = r.material_type(line["material_type"])
-    if line.get("location_code"):
+    locations = location_list(line)
+    if locations:
         out["locations"] = [{
-            "locationId": r.location(line["location_code"]),
-            "quantityPhysical": 1 if physical else 0,
-            "quantityElectronic": 1 if electronic else 0}]
+            "locationId": r.location(loc["code"]),
+            "quantityPhysical": loc["quantity_physical"],
+            "quantityElectronic": loc["quantity_electronic"]}
+            for loc in locations]
     return out
 
 

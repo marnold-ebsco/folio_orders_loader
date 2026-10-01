@@ -121,10 +121,17 @@ Live check still PENDING for payment_status, vendor reference numbers, notes/tag
 
 Remaining line-field groups, in order (do one group per session; schema:
 https://github.com/folio-org/acq-models mod-orders-storage/schemas/po_line.json):
-1. **Funds, locations, quantity, cost** (NEXT): several funds per line (percentage or amount,
-   expense class each), several locations with quantities, quantityPhysical/Electronic above 1,
-   discount, additionalCost, exchangeRate, discountType. Needs a neutral-record design for repeating
-   funds/locations (e.g. fund_distribution[n].code/.value/.type like product_ids[n]) and the mapping.
+1. **Funds, locations, quantity, cost**: CODED (2026-09-30, not committed), 42 tests pass, flake8
+   clean, README updated. Neutral keys: `fund_distribution[n].code/.expense_class_code/.value/.type`
+   (percentage default; must sum 100), `locations[n].code/.quantity_physical/.quantity_electronic`
+   (must sum to line quantities), `quantity_physical/_electronic`, `discount`, `discount_type`,
+   `additional_cost`, `exchange_rate`. `fund_code`/`expense_class_code`/`location_code` remain the
+   single shorthand (fund fields moved out of records.REQUIRED; validate_line/check_map require
+   one form). Repeating groups generalised via records.REPEATING in mapping.py. budgets.py now
+   checks every fund in the distribution. LIVE CHECK PENDING (bugfest login 503): scratch map/data
+   at /tmp/g1 (PO ZTG1001, P/E Mix, 60/40 TEST-ELEC/TEST-PRINT, qty 3/2, discount 10%, additional
+   cost 4); dry run, --live, export, delete. Also bump version/tag v0.3.0 and update the EBSCOnet pin
+   after the live check.
 2. **Bibliographic**: contributors (name + contributor name type), edition, publicationDate.
 3. **People/flags/tags**: line-level tags, requester, selector, rush.
 4. **Electronic extras**: eresource.resourceUrl, userLimit, trial; physical volumes,

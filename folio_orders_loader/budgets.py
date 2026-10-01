@@ -1,4 +1,5 @@
 """Pre-flight check that each fund / expense class pair has an Active budget."""
+from .records import fund_list
 
 
 def check_budgets(lines, r):
@@ -10,8 +11,9 @@ def check_budgets(lines, r):
     """
     errors = []
     seen = set()
-    for ln in lines:
-        pair = (ln["fund_code"], ln["expense_class_code"])
+    pairs = [(f["code"], f["expense_class_code"])
+             for ln in lines for f in fund_list(ln)]
+    for pair in pairs:
         if pair in seen:
             continue
         seen.add(pair)

@@ -55,6 +55,19 @@ A value with no entry passes through unchanged and produces a **warning**, so it
 see which source values the table missed. Cost accepts `$` and commas; boolean fields accept
 true/yes/y/1. `product_ids[n].type` / `.value` build the line's product ID list.
 
+### Several funds, several locations, quantity and cost extras
+
+- `fund_code` + `expense_class_code` remain the one-fund shorthand (100%). For several funds map
+  `fund_distribution[n].code`, `.expense_class_code` (falls back to the line's
+  `expense_class_code`), `.value` and `.type` (`percentage` default, or `amount`). Percentages
+  must add to 100; `$` and commas are accepted in `.value`.
+- `quantity_physical` / `quantity_electronic` set the copies (default 1 for each format the line
+  has). `locations[n].code`, `.quantity_physical`, `.quantity_electronic` give several locations;
+  their quantities must add up to the line quantities (a single location defaults to the line
+  quantities). Use `location_code` for the one-location shorthand, not both.
+- `discount` with `discount_type` (`amount` default, or `percentage`), `additional_cost` and
+  `exchange_rate` go on the cost block. `cost` stays the list unit price.
+
 A `translate` miss or an unparseable date is an **error**: `validate` fails and `load`
 refuses to run until it is fixed.
 

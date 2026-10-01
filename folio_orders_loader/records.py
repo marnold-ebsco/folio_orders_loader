@@ -14,8 +14,17 @@ REFERENCE_TYPES = ("Vendor continuation reference number", "Vendor order referen
 ORDER_TYPES = ("Ongoing", "One-Time")
 
 REQUIRED = ("po_number", "vendor_code", "title", "order_format", "cost",
-            "currency", "fund_code", "expense_class_code", "order_type",
-            "acquisition_method")
+            "currency", "order_type", "acquisition_method")
+# Single-fund shorthand; replaced by fund_distribution[n] for several funds.
+FUND_FIELDS = ("fund_code", "expense_class_code")
+DISTRIBUTION_TYPES = ("percentage", "amount")
+DISCOUNT_TYPES = ("amount", "percentage")
+# Repeating groups: name -> sub-keys (neutral records hold a list of dicts).
+REPEATING = {
+    "product_ids": ("type", "value"),
+    "fund_distribution": ("code", "expense_class_code", "value", "type"),
+    "locations": ("code", "quantity_physical", "quantity_electronic"),
+}
 
 # Fields that must agree on every line of one PO.
 PO_LEVEL = ("vendor_code", "order_type", "interval_days", "is_subscription",
@@ -23,9 +32,111 @@ PO_LEVEL = ("vendor_code", "order_type", "interval_days", "is_subscription",
 UUID_RE = re.compile(r"^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$", re.I)
 
 
+def _number(value):
+    try:
+        return float(value)
+    except (TypeError, ValueError):
+        return None
+
+
+def fund_list(line):
+    """Fund distribution as dicts with code, expense_class_code, value, type."""
+    dist = line.get("fund_distribution")
+    if not dist:
+        return [{"code": line.get("fund_code"),
+                 "expense_class_code": line.get("expense_class_code"),
+                 "value": 100, "type": "percentage"}]
+    return [{"code": d.get("code"),
+             "expense_class_code": d.get("expense_class_code")
+             or line.get("expense_class_code"),
+             "value": d.get("value", 100 if len(dist) == 1 else None),
+             "type": d.get("type") or "percentage"} for d in dist]
+
+
+def quantities(line):
+    """(physical, electronic) copies for the line; 1 for each format it has."""
+    fmt = line.get("order_format")
+    phys = fmt in ("Physical Resource", "P/E Mix")
+    elec = fmt in ("Electronic Resource", "P/E Mix")
+    return (int(_number(line.get("quantity_physical")) or 1) if phys else 0,
+            int(_number(line.get("quantity_electronic")) or 1) if elec else 0)
+
+
+def location_list(line):
+    """Locations as dicts with code, quantity_physical, quantity_electronic."""
+    phys, elec = quantities(line)
+    locs = line.get("locations")
+    if not locs:
+        if not line.get("location_code"):
+            return []
+        return [{"code": line["location_code"], "quantity_physical": phys,
+                 "quantity_electronic": elec}]
+    only = len(locs) == 1
+    return [{"code": loc.get("code"),
+             "quantity_physical": int(_number(loc.get("quantity_physical"))
+                                      or (phys if only else 0)),
+             "quantity_electronic": int(_number(loc.get("quantity_electronic"))
+                                        or (elec if only else 0))}
+            for loc in locs]
+
+
+def _check_funds(line, problems):
+    if not line.get("fund_distribution") and not all(
+            line.get(k) for k in FUND_FIELDS):
+        problems.append("missing fund_code/expense_class_code "
+                        "(or fund_distribution)")
+        return
+    funds = fund_list(line)
+    for i, f in enumerate(funds):
+        if not f["code"]:
+            problems.append(f"fund_distribution[{i}]: missing code")
+        if not f["expense_class_code"]:
+            problems.append(f"fund_distribution[{i}]: missing expense_class_code")
+        if f["type"] not in DISTRIBUTION_TYPES:
+            problems.append(f"fund_distribution[{i}]: type {f['type']!r} "
+                            f"not in {DISTRIBUTION_TYPES}")
+        if _number(f["value"]) is None:
+            problems.append(f"fund_distribution[{i}]: value {f['value']!r} "
+                            "is not a number")
+    values = [_number(f["value"]) for f in funds]
+    if ({f["type"] for f in funds} == {"percentage"} and None not in values
+            and abs(sum(values) - 100) > 0.001):
+        problems.append(f"fund percentages add to {sum(values):g}, not 100")
+
+
+def _check_quantities(line, problems):
+    for key in ("quantity_physical", "quantity_electronic"):
+        n = _number(line.get(key)) if line.get(key) not in (None, "") else 1
+        if n is None or n < 1 or n != int(n):
+            problems.append(f"{key} {line[key]!r} must be a whole number of 1 or more")
+            return
+    for key in ("discount", "additional_cost", "exchange_rate"):
+        if line.get(key) not in (None, "") and _number(line[key]) is None:
+            problems.append(f"{key} {line[key]!r} is not a number")
+    if line.get("discount_type"):
+        if line["discount_type"] not in DISCOUNT_TYPES:
+            problems.append(f"discount_type {line['discount_type']!r} "
+                            f"not in {DISCOUNT_TYPES}")
+        if line.get("discount") in (None, ""):
+            problems.append("discount_type given without discount")
+    if line.get("locations"):
+        if line.get("location_code"):
+            problems.append("use locations[n] or location_code, not both")
+        locs = location_list(line)
+        phys, elec = quantities(line)
+        for label, want, have in (
+                ("physical", phys, sum(x["quantity_physical"] for x in locs)),
+                ("electronic", elec, sum(x["quantity_electronic"] for x in locs))):
+            if want != have:
+                problems.append(f"location {label} quantities add to {have}, "
+                                f"line quantity is {want}")
+
+
 def validate_line(line):
     """Return a list of problems with one line record (empty when valid)."""
     problems = []
+    _check_funds(line, problems)
+    _check_quantities(line, problems)
     for key in REQUIRED:
         if line.get(key) in (None, ""):
             problems.append(f"missing {key}")

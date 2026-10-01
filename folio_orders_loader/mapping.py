@@ -21,16 +21,20 @@ import json
 import re
 from datetime import datetime
 
-from .records import REQUIRED
+from .records import FUND_FIELDS, REPEATING, REQUIRED
 
-OPTIONAL = ("interval_days", "is_subscription", "manual_renewal",
+OPTIONAL = ("fund_code", "expense_class_code", "quantity_physical",
+            "quantity_electronic", "discount", "discount_type",
+            "additional_cost", "exchange_rate", "interval_days",
+            "is_subscription", "manual_renewal",
             "renewal_date", "subscription_from", "subscription_to",
             "publisher", "cancellation_restriction", "access_provider_code",
             "location_code", "material_type", "description", "receipt_status",
             "vendor_account", "payment_status", "vendor_reference_number",
             "vendor_reference_type", "notes", "tags", "bill_to", "ship_to")
 BOOLEAN = ("is_subscription", "manual_renewal", "cancellation_restriction")
-PRODUCT_ID_RE = re.compile(r"^product_ids\[(\d+)\]\.(type|value)$")
+REPEATING_RE = re.compile(r"^(%s)\[(\d+)\]\.(\w+)$" % "|".join(REPEATING))
+MONEY = ("cost", "discount", "additional_cost", "fund_distribution.value")
 ROW_KEYS = ("folio_field", "legacy_field", "value", "description",
             "fallback_legacy_field", "fallback_value", "translate",
             "rules", "rules_apply_scope", "date_format")
@@ -41,12 +45,17 @@ DEFAULT_READER = {"delimiter": "\t", "encoding": "utf-8-sig"}
 
 
 def known_field(name):
-    return name in REQUIRED or name in OPTIONAL or bool(PRODUCT_ID_RE.match(name))
+    if name in REQUIRED or name in OPTIONAL:
+        return True
+    match = REPEATING_RE.match(name)
+    return bool(match) and match.group(3) in REPEATING[match.group(1)]
 
 
 def _describe(name):
     if name in REQUIRED:
         return "REQUIRED"
+    if name in FUND_FIELDS:
+        return "REQUIRED unless fund_distribution[n] is mapped"
     if name in DATES:
         return 'optional "date_format": "%m/%d/%Y" converts to ISO'
     return ""
@@ -55,7 +64,7 @@ def _describe(name):
 def template():
     """Blank map with every known neutral key unmapped."""
     names = list(REQUIRED) + list(OPTIONAL) + [
-        "product_ids[0].type", "product_ids[0].value"]
+        f"{group}[0].{key}" for group, keys in REPEATING.items() for key in keys]
     return {"reader": dict(DEFAULT_READER), "data": [
         {"folio_field": n, "legacy_field": NOT_MAPPED, "value": "",
          "description": _describe(n)} for n in names]}
@@ -98,10 +107,19 @@ def check_map(mapping):
                         row["date_format"]), row["date_format"])
                 except ValueError:
                     problems.append(f"row {i} ({name}): bad date_format")
-    for name in REQUIRED:
+
+    def mapped(name):
         row = next((r for r in rows if r.get("folio_field") == name), None)
-        if row is None or not _has_source(row):
+        return row is not None and _has_source(row)
+
+    for name in REQUIRED:
+        if not mapped(name):
             problems.append(f"required field {name!r} is not mapped")
+    if not mapped("fund_distribution[0].code"):
+        for name in FUND_FIELDS:
+            if not mapped(name):
+                problems.append(f"required field {name!r} is not mapped "
+                                "(or map fund_distribution[0])")
     return problems
 
 
@@ -188,7 +206,7 @@ def _translate(spec, value):
 def _coerce(name, value):
     if name in BOOLEAN and isinstance(value, str):
         return value.strip().casefold() in ("true", "yes", "y", "1")
-    if name == "cost" and isinstance(value, str):
+    if name in MONEY and isinstance(value, str):
         return value.replace("$", "").replace(",", "")
     return value
 
@@ -199,7 +217,7 @@ def map_row(mapping, row):
     Errors are translation misses and unparseable dates; the line is still
     returned so callers decide whether to stop.
     """
-    line, errors, ids = {}, [], {}
+    line, errors, groups = {}, [], {}
     for spec in mapping["data"]:
         name = spec["folio_field"]
         value = _apply_rules(spec, _source_value(spec, row), row)
@@ -212,13 +230,15 @@ def map_row(mapping, row):
                 errors.append(err)
         if value in ("", None):
             continue
-        match = PRODUCT_ID_RE.match(name)
+        match = REPEATING_RE.match(name)
         if match:
-            ids.setdefault(int(match.group(1)), {})[match.group(2)] = value
+            group, index, key = match.groups()
+            value = _coerce(f"{group}.{key}", value)
+            groups.setdefault(group, {}).setdefault(int(index), {})[key] = value
         else:
             line[name] = _coerce(name, value)
-    if ids:
-        line["product_ids"] = [ids[i] for i in sorted(ids)]
+    for group, items in groups.items():
+        line[group] = [items[i] for i in sorted(items)]
     return line, errors
 
 
