@@ -1,11 +1,11 @@
-# Handoff (2026-10-01): folio_orders_loader v0.3.2 released
+# Handoff (2026-10-01): folio_orders_loader v0.3.4 released
 
 This file covers the loader package only. The EBSCOnet side (adapter, `ebsconet.py` workflow,
 `api-load-default` branch, vendor accounts, real-tenant test) is tracked in
 `~/scratch/EBSCOnet/HANDOFF.md`; read that for EBSCOnet work.
 
 ## What the loader owes EBSCOnet (cross-project facts)
-- EBSCOnet depends on this package by git tag (pinned to v0.3.1; v0.3.2 only adds the opt-in check_budget, not needed there).
+- EBSCOnet depends on this package by git tag (pinned to v0.3.4; v0.3.2 only adds the opt-in check_budget, v0.3.3/4 only add the installer).
   Installing in EBSCOnet's venv does not auto-upgrade: after a pin bump run
   `.venv/bin/pip install --force-reinstall --no-deps` on the requirements line.
 - The EBSCOnet adapter emits neutral line records (`records.py`) and bypasses the mapping file.
@@ -47,6 +47,16 @@ Background: `FINDINGS.md` (spike results, verdict GO), `API_SPIKE.md` (original 
 - v0.3.1 released 2026-10-01 (commit 636fd9a, tag pushed): expense class is optional (see below).
 - v0.3.2 released 2026-10-01 (commit 2a931ae, tag pushed): opt-in check_budget=True on load() (default off);
   invalid + no POST when a fund has no Active budget or the class is not Active on it. 95 tests pass.
+- v0.3.3 / v0.3.4 released 2026-10-01 (tags pushed; v0.3.4 = 9cb603e): `install.sh` + README
+  "Install on a host (no clone)". v0.3.3's tag lacks the README section; use v0.3.4. No code change.
+  EBSCOnet pin bumped to v0.3.4 (f625908), 197 tests pass.
+- Installer (`install.sh`, repo root): downloads one release tarball via the GitHub API
+  (`GITHUB_TOKEN` required, repo is private; read-only fine-grained token, Contents: read),
+  pip-installs it into `<dir>/venv` (default `~/folio-orders-loader`), links `folio-orders-loader`
+  into `/usr/local/bin` or `~/.local/bin`. Flags: `-v tag|latest`, `-d dir`, `-b bindir`. Upgrade =
+  re-run with a newer `-v`. Tested in WSL 2026-10-01 with `GITHUB_TOKEN=$(gh auth token)` (not set
+  in the shell by default): v0.3.4 and `-v latest` resolution OK. NOT tested on a real EC2, without
+  python3-venv, or with the fine-grained token.
 - Live-verified on bugfest 2026-10-01: a PO with a blank expense class loads, and opens with --open
   (export shows no expenseClassId). Deleted afterwards (Open POs must be PUT back to Pending first).
 
@@ -90,6 +100,7 @@ FOLIO does not require expense classes. A blank class is now allowed (fund still
   change are done (see EBSCOnet HANDOFF).
 - Optional: switch the EBSCOnet adapter to load(check_budget=True) instead of its own check_dry_run_budgets;
   bump its pin to v0.3.2 if so.
+- Run `install.sh` on a real EC2 with the fine-grained token (only WSL tested so far).
 - Untested: a fund with no budget on a real tenant, and over-budget behaviour (bugfest allows overspend).
 
 ## Not done
