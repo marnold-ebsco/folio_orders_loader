@@ -1,11 +1,11 @@
-# Handoff (2026-10-01): folio_orders_loader v0.3.1 released
+# Handoff (2026-10-01): folio_orders_loader v0.3.2 released
 
 This file covers the loader package only. The EBSCOnet side (adapter, `ebsconet.py` workflow,
 `api-load-default` branch, vendor accounts, real-tenant test) is tracked in
 `~/scratch/EBSCOnet/HANDOFF.md`; read that for EBSCOnet work.
 
 ## What the loader owes EBSCOnet (cross-project facts)
-- EBSCOnet depends on this package by git tag (`requirements.txt` pins `@v0.3.0`, 84a99ac; bump to `@v0.3.1`, 636fd9a).
+- EBSCOnet depends on this package by git tag (pinned to v0.3.1; v0.3.2 only adds the opt-in check_budget, not needed there).
   Installing in EBSCOnet's venv does not auto-upgrade: after a pin bump run
   `.venv/bin/pip install --force-reinstall --no-deps` on the requirements line.
 - The EBSCOnet adapter emits neutral line records (`records.py`) and bypasses the mapping file.
@@ -45,7 +45,10 @@ Background: `FINDINGS.md` (spike results, verdict GO), `API_SPIKE.md` (original 
 - v0.3.0 released 2026-10-01 (commit 53a6323, tag pushed). EBSCOnet's 188 tests passed against
   the tag when it was pinned.
 - v0.3.1 released 2026-10-01 (commit 636fd9a, tag pushed): expense class is optional (see below).
-  Unit-tested only; not run against bugfest.
+- v0.3.2 released 2026-10-01 (commit 2a931ae, tag pushed): opt-in check_budget=True on load() (default off);
+  invalid + no POST when a fund has no Active budget or the class is not Active on it. 95 tests pass.
+- Live-verified on bugfest 2026-10-01: a PO with a blank expense class loads, and opens with --open
+  (export shows no expenseClassId). Deleted afterwards (Open POs must be PUT back to Pending first).
 
 ## Live-verified (bugfest, 2026-09-30 / 10-01)
 - Everything in the field groups, incl. acquisition units (Law, user is a member now), address
@@ -82,14 +85,12 @@ FOLIO does not require expense classes. A blank class is now allowed (fund still
 - README fund shorthand text updated; tests added in test_budgets, test_builder,
   test_funds_locations.
 
-## NEXT (for the EBSCOnet session, `~/scratch/EBSCOnet`, see its HANDOFF.md)
-- Bump the `requirements.txt` pin to `@v0.3.1`, then
-  `.venv/bin/pip install --force-reinstall --no-deps` on that line.
-- Make `pipeline/folio_orders_adapter.py` honour `rules.use_expense_classes: false`. It currently
-  falls back to `default_expense_class` for a blank cell (line ~43), so a tenant without classes
-  still gets one put on the lines, or all POs go `invalid` if the default is empty.
-  README_API.md already claims "no class is put on the lines".
-- Optionally run a no-class PO against bugfest to confirm FOLIO accepts it.
+## NEXT
+- Nothing open for the loader. The EBSCOnet pin bump to v0.3.1 and the adapter use_expense_classes
+  change are done (see EBSCOnet HANDOFF).
+- Optional: switch the EBSCOnet adapter to load(check_budget=True) instead of its own check_dry_run_budgets;
+  bump its pin to v0.3.2 if so.
+- Untested: a fund with no budget on a real tenant, and over-budget behaviour (bugfest allows overspend).
 
 ## Not done
 - `open-error` path exercised by unit tests only (see gotchas); the user will exercise
