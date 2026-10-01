@@ -63,10 +63,10 @@ Venv: `.venv/bin/python`.
 3. Resume after mid-file failure: DONE live (2026-09-30). 3-PO file, RSM2 failed
    (budgetExpenseClassNotFound), RSM1/RSM3 still created (a failure does not stop the run);
    after fixing RSM2 a re-run created only RSM2 and skipped the others as `exists`; a third
-   run skipped all. Test POs deleted. Note: the `error` detail is FOLIO's raw response
-   (up to 500 chars, multi-line) - consider trimming to the message.
-   Remaining open checks: over-budget/encumbrance errors, ISSN + title number, receipt status,
-   account fields (these three are not in builder.py yet), throughput on a larger file.
+   run skipped all. Test POs deleted. The `error` detail is now trimmed to
+   "message (code)" by `loader.error_message` (DONE, tested). All open checks are closed (see below).
+   Clean-venv `pip install -e .[dev]` confirmed (2026-09-30). Not done: adapter live re-run
+   (bugfest login returned 503), an "open order" step, payment status / reference numbers.
 4. Commit: DONE locally (2026-09-30): git init (branch main), commit 43d13d5, tag v0.1.0. NOT pushed:
    GitHub remote `marnold-ebsco/folio_orders_loader` not created/added yet.
 5a. EBSCONET adapter written locally (uncommitted, in ~/scratch/EBSCOnet): pipeline/folio_orders_adapter.py

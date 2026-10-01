@@ -41,6 +41,10 @@ ones are marked `REQUIRED`).
  ]}
 ```
 
+`product_ids[n].type` must be an identifier type name that exists in the tenant (for example
+`ISSN`, `ISBN`, `Local identifier`; there is no "Title number" type). Add `product_ids[1]`
+for a second ID such as a title number.
+
 Each row may have: `folio_field`, `legacy_field` (source column; `"Not mapped"` = none),
 `fallback_legacy_field` (second column), `value` (literal), `fallback_value`, `translate`,
 `description`. The source value is the first non-empty of: `legacy_field`,
