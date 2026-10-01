@@ -177,6 +177,11 @@ acqUnitIds, poNumberPrefix/Suffix, assignedTo, template, manualPo, reEncumber, c
   assignedTo, template, manualPo, reEncumber, customFields, and an "open order" step
   (loader is Pending-only).
 
+### Group 6 (items 1-3 below): CODED and COMMITTED locally, 61 tests, README updated, live check pending
+Keys: create_inventory_physical / create_inventory_electronic (two keys, since electronic has no
+Item option; default None), checkin_items, PO-level acq_unit_names (units have NO code, so the
+name is used; Resolver.acquisition_unit queries /acquisitions-units/units by name; not verified live).
+
 ### Recommended additions, in priority order
 1. **`create_inventory`** (eresource and physical; "None" / "Instance" / "Instance, Holding" /
    "Instance, Holding, Item"). Hardcoded to "None" today; real migrations nearly always need it.

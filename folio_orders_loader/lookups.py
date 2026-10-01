@@ -34,6 +34,10 @@ class Resolver:
         return self._one("/orders/acquisition-methods", "acquisitionMethods",
                          "value==" + _q(value))["id"]
 
+    def acquisition_unit(self, name):
+        return self._one("/acquisitions-units/units", "acquisitionsUnits",
+                         "name==" + _q(name))["id"]
+
     def fund(self, code):
         """Return the fund record (id and code)."""
         return self._one("/finance/funds", "funds", "code==" + _q(code))

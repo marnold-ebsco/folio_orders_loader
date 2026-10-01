@@ -57,7 +57,7 @@ def build_line(line, r):
         "acquisitionMethod": r.acquisition_method(line["acquisition_method"]),
         "orderFormat": fmt,
         "source": "User",
-        "checkinItems": False,
+        "checkinItems": bool(line.get("checkin_items")),
         "cancellationRestriction": bool(line.get("cancellation_restriction")),
         "fundDistribution": distribution,
         "cost": price,
@@ -120,7 +120,8 @@ def build_line(line, r):
         out["vendorDetail"] = vendor_detail
     if electronic:
         out["eresource"] = {
-            "createInventory": "None", "activated": False,
+            "createInventory": line.get("create_inventory_electronic") or "None",
+            "activated": False,
             "accessProvider": r.organization(
                 line.get("access_provider_code") or line["vendor_code"])}
         if line.get("resource_url"):
@@ -130,7 +131,8 @@ def build_line(line, r):
         if line.get("trial"):
             out["eresource"]["trial"] = True
     if physical:
-        out["physical"] = {"createInventory": "None"}
+        out["physical"] = {
+            "createInventory": line.get("create_inventory_physical") or "None"}
         out["physical"]["materialType"] = r.material_type(line["material_type"])
         volumes = as_list(line.get("volumes"))
         if volumes:
@@ -185,6 +187,9 @@ def build_order(po_number, lines, r):
     tags = as_list(first.get("tags"))
     if tags:
         order["tags"] = {"tagList": tags}
+    units = [r.acquisition_unit(n) for n in as_list(first.get("acq_unit_names"))]
+    if units:
+        order["acqUnitIds"] = units
     if first.get("bill_to"):
         order["billTo"] = first["bill_to"]
     if first.get("ship_to"):

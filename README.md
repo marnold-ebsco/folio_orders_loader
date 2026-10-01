@@ -96,6 +96,14 @@ Booleans: `automatic_export`, `collection`, `suppress_from_discovery`, `multi_ye
 `agreement_id`, `package_po_line_id` (not looked up). Payment terms and custom fields are not
 supported.
 
+### Inventory, check-in and acquisition units
+
+`create_inventory_physical` (None, Instance, "Instance, Holding", "Instance, Holding, Item") and
+`create_inventory_electronic` (the same without Item) say what inventory records FOLIO creates
+when the order is opened; both default to None. `checkin_items` (boolean) turns on check-in
+receiving. `acq_unit_names` (PO level, `|`-separated) are acquisition unit names, looked up to
+`acqUnitIds`; units have no code, so the name is used.
+
 A `translate` miss or an unparseable date is an **error**: `validate` fails and `load`
 refuses to run until it is fixed.
 

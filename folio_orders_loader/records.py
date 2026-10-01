@@ -11,6 +11,8 @@ PAYMENT_STATUSES = ("Awaiting Payment", "Cancelled", "Fully Paid", "Partially Pa
 REFERENCE_TYPES = ("Vendor continuation reference number", "Vendor order reference number",
                    "Vendor subscription reference number", "Vendor internal number",
                    "Vendor title number")
+INVENTORY_PHYSICAL = ("None", "Instance", "Instance, Holding", "Instance, Holding, Item")
+INVENTORY_ELECTRONIC = INVENTORY_PHYSICAL[:3]
 ORDER_TYPES = ("Ongoing", "One-Time")
 
 REQUIRED = ("po_number", "vendor_code", "title", "order_format", "cost",
@@ -29,7 +31,8 @@ REPEATING = {
 
 # Fields that must agree on every line of one PO.
 PO_LEVEL = ("vendor_code", "order_type", "interval_days", "is_subscription",
-            "manual_renewal", "renewal_date", "notes", "tags", "bill_to", "ship_to")
+            "manual_renewal", "renewal_date", "notes", "tags", "bill_to", "ship_to",
+            "acq_unit_names")
 LINE_FLAGS = (("automatic_export", "automaticExport"), ("collection", "collection"),
               ("suppress_from_discovery", "suppressInstanceFromDiscovery"),
               ("multi_year_payment", "multiYearPayment"),
@@ -173,6 +176,10 @@ def validate_line(line):
             problems.append(f"contributors[{i}]: missing name")
         if not c.get("type"):
             problems.append(f"contributors[{i}]: missing type")
+    for key, allowed in (("create_inventory_physical", INVENTORY_PHYSICAL),
+                         ("create_inventory_electronic", INVENTORY_ELECTRONIC)):
+        if line.get(key) and line[key] not in allowed:
+            problems.append(f"{key} {line[key]!r} not in {allowed}")
     if line.get("claiming_interval") not in (None, ""):
         n = _number(line["claiming_interval"])
         if n is None or n < 0 or n != int(n):
