@@ -17,11 +17,22 @@ def build_line(line, r):
             "distributionType": f["type"], "value": float(f["value"])})
 
     details = {}
-    ids = [{"productId": p["value"],
-            "productIdType": r.identifier_type(p["type"])}
-           for p in line.get("product_ids") or [] if p.get("value")]
+    ids = []
+    for p in line.get("product_ids") or []:
+        if p.get("value"):
+            pid = {"productId": p["value"],
+                   "productIdType": r.identifier_type(p["type"])}
+            if p.get("qualifier"):
+                pid["qualifier"] = p["qualifier"]
+            ids.append(pid)
     if ids:
         details["productIds"] = ids
+    if line.get("receiving_note"):
+        details["receivingNote"] = line["receiving_note"]
+    if line.get("is_acknowledged"):
+        details["isAcknowledged"] = True
+    if line.get("subscription_interval") not in (None, ""):
+        details["subscriptionInterval"] = int(float(line["subscription_interval"]))
     if line.get("subscription_from"):
         details["subscriptionFrom"] = line["subscription_from"]
     if line.get("subscription_to"):
@@ -72,6 +83,13 @@ def build_line(line, r):
             out[field] = str(line[key])
     if line.get("rush"):
         out["rush"] = True
+    for key, field in (("renewal_note", "renewalNote"),
+                       ("cancellation_restriction_note",
+                        "cancellationRestrictionNote")):
+        if line.get(key):
+            out[field] = line[key]
+    if line.get("receipt_date"):
+        out["receiptDate"] = date_time(line["receipt_date"])
     if line.get("description"):
         out["poLineDescription"] = line["description"]
     if line.get("receipt_status"):
@@ -92,9 +110,24 @@ def build_line(line, r):
             "createInventory": "None", "activated": False,
             "accessProvider": r.organization(
                 line.get("access_provider_code") or line["vendor_code"])}
+        if line.get("resource_url"):
+            out["eresource"]["resourceUrl"] = line["resource_url"]
+        if line.get("user_limit"):
+            out["eresource"]["userLimit"] = str(line["user_limit"])
+        if line.get("trial"):
+            out["eresource"]["trial"] = True
     if physical:
         out["physical"] = {"createInventory": "None"}
         out["physical"]["materialType"] = r.material_type(line["material_type"])
+        volumes = as_list(line.get("volumes"))
+        if volumes:
+            out["physical"]["volumes"] = volumes
+        if line.get("material_supplier_code"):
+            out["physical"]["materialSupplier"] = r.organization(
+                line["material_supplier_code"])
+        if line.get("expected_receipt_date"):
+            out["physical"]["expectedReceiptDate"] = date_time(
+                line["expected_receipt_date"])
     locations = location_list(line)
     if locations:
         out["locations"] = [{
@@ -103,6 +136,12 @@ def build_line(line, r):
             "quantityElectronic": loc["quantity_electronic"]}
             for loc in locations]
     return out
+
+
+def date_time(value):
+    """A YYYY-MM-DD date as the date-time FOLIO's schema wants."""
+    value = str(value)
+    return value if "T" in value else value + "T00:00:00.000+00:00"
 
 
 def renewal_date(lines):

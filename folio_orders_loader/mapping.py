@@ -33,15 +33,19 @@ OPTIONAL = ("fund_code", "expense_class_code", "quantity_physical",
             "vendor_account", "payment_status", "vendor_reference_number",
             "vendor_reference_type", "notes", "tags", "bill_to", "ship_to",
             "edition", "publication_date", "line_tags", "requester",
-            "selector", "rush")
+            "selector", "rush", "resource_url", "user_limit", "trial",
+            "volumes", "material_supplier_code", "expected_receipt_date",
+            "receiving_note", "is_acknowledged", "subscription_interval",
+            "receipt_date", "renewal_note", "cancellation_restriction_note")
 BOOLEAN = ("is_subscription", "manual_renewal", "cancellation_restriction",
-           "rush")
+           "rush", "trial", "is_acknowledged")
 REPEATING_RE = re.compile(r"^(%s)\[(\d+)\]\.(\w+)$" % "|".join(REPEATING))
 MONEY = ("cost", "discount", "additional_cost", "fund_distribution.value")
 ROW_KEYS = ("folio_field", "legacy_field", "value", "description",
             "fallback_legacy_field", "fallback_value", "translate",
             "rules", "rules_apply_scope", "date_format")
-DATES = ("renewal_date", "subscription_from", "subscription_to")
+DATES = ("renewal_date", "subscription_from", "subscription_to",
+         "expected_receipt_date", "receipt_date")
 RULE_OPS = ("split", "combine", "strip_prefix", "strip_suffix", "upper", "lower")
 NOT_MAPPED = "Not mapped"
 DEFAULT_READER = {"delimiter": "\t", "encoding": "utf-8-sig"}

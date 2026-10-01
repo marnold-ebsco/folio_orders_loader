@@ -79,6 +79,15 @@ example `Personal name`, `Corporate name`, `Meeting name`).
 `line_tags` (`|`-separated list or a list; goes to the PO line's `tags.tagList`, unlike `tags`,
 which is PO level), `requester` and `selector` (free text), `rush` (boolean, true/yes/y/1).
 
+### Electronic and receiving extras
+
+Electronic lines: `resource_url`, `user_limit` (text), `trial` (boolean). Physical lines:
+`volumes` (`|`-separated list), `material_supplier_code` (organization code) and
+`expected_receipt_date`. Any line: `receiving_note`, `is_acknowledged` (boolean),
+`subscription_interval` (days), `receipt_date`, `renewal_note`,
+`cancellation_restriction_note`, and `product_ids[n].qualifier`. The two date fields accept
+`date_format` and are sent as midnight UTC date-times.
+
 A `translate` miss or an unparseable date is an **error**: `validate` fails and `load`
 refuses to run until it is fixed.
 

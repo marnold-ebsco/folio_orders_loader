@@ -145,10 +145,10 @@ https://github.com/folio-org/acq-models mod-orders-storage/schemas/po_line.json)
 3. **People/flags/tags**: CODED and COMMITTED locally (not pushed/tagged), 49 tests pass, flake8 clean,
    README updated. Neutral keys: `line_tags` (| list -> line tags.tagList; `tags` stays PO level),
    `requester`, `selector`, `rush` (boolean). LIVE CHECK PENDING: load, export, confirm, delete.
-4. **Electronic extras** (NEXT): eresource.resourceUrl, userLimit, trial; physical volumes,
+4. **Electronic extras**: CODED and COMMITTED locally (not pushed/tagged), 54 tests pass, flake8 clean, README updated. Neutral keys: resource_url, user_limit, trial, volumes (| list), material_supplier_code (org code), expected_receipt_date, receiving_note, is_acknowledged, subscription_interval, receipt_date, renewal_note, cancellation_restriction_note, product_ids[n].qualifier. Dates sent as T00:00:00.000+00:00. LIVE CHECK PENDING (groups 1-4 all unchecked live; then bump v0.3.0, tag, push, update EBSCOnet pin). Original list: eresource.resourceUrl, userLimit, trial; physical volumes,
    materialSupplier, expectedReceiptDate; details receivingNote, isAcknowledged,
    subscriptionInterval, productIds qualifier; receiptDate; renewalNote, cancellationRestrictionNote.
-5. **Maybe**: donor/donorOrganizationIds, paymentTerms, multiYearPayment, claiming*, automaticExport,
+5. **Maybe** (NEXT): donor/donorOrganizationIds, paymentTerms, multiYearPayment, claiming*, automaticExport,
    collection, suppressInstanceFromDiscovery, instanceId, agreementId, isPackage/packagePoLineId,
    customFields. Skip system fields (id, metadata, poLineNumber, purchaseOrderId, searchLocationIds,
    lastExport, lastEDIExportDate).

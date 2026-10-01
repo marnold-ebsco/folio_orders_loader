@@ -21,7 +21,7 @@ DISTRIBUTION_TYPES = ("percentage", "amount")
 DISCOUNT_TYPES = ("amount", "percentage")
 # Repeating groups: name -> sub-keys (neutral records hold a list of dicts).
 REPEATING = {
-    "product_ids": ("type", "value"),
+    "product_ids": ("type", "value", "qualifier"),
     "fund_distribution": ("code", "expense_class_code", "value", "type"),
     "locations": ("code", "quantity_physical", "quantity_electronic"),
     "contributors": ("name", "type"),
@@ -158,6 +158,10 @@ def validate_line(line):
             problems.append(f"vendor_reference_type {ref_type!r} not in {REFERENCE_TYPES}")
     elif line.get("vendor_reference_type"):
         problems.append("vendor_reference_type given without vendor_reference_number")
+    if line.get("subscription_interval") not in (None, ""):
+        n = _number(line["subscription_interval"])
+        if n is None or n < 0 or n != int(n):
+            problems.append("subscription_interval must be a whole number of days")
     for i, c in enumerate(line.get("contributors") or []):
         if not c.get("name"):
             problems.append(f"contributors[{i}]: missing name")
