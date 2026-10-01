@@ -71,6 +71,26 @@ Background: `FINDINGS.md` (spike results, verdict GO), `API_SPIKE.md` (original 
   P/E Mix allows both. `material_type` and `access_provider_code` are deliberately not checked
   by `validate_line` (material type is still resolved at build time).
 
+## NEXT (for the loader-CLI session): make the expense class optional, release v0.3.1
+Found 2026-10-01 from the EBSCOnet side. FOLIO does not require expense classes, but the loader
+does, so a tenant that does not use them cannot be loaded:
+- `records.py` `_check_funds` (lines ~97-108) marks a line `invalid` when `fund_code` /
+  `expense_class_code` is missing, and per `fund_distribution` entry ("missing expense_class_code").
+  `FUND_FIELDS = ("fund_code", "expense_class_code")` (line 21) is used for the check.
+- `builder.py` `build_line` (line ~16) always calls `r.expense_class(...)` and sets
+  `expenseClassId`; with a blank code `lookups._q(None)` would query `code=="None"`.
+- `budgets.py` `check_budgets` always resolves the class and compares it to the budget's Active
+  `statusExpenseClasses`.
+- Wanted: blank class is allowed (fund still required): no `expenseClassId` in the payload, no
+  "missing" problem, and `check_budgets` keeps the "no Active budget" check but skips the class
+  half. A class that IS given must still resolve and be Active on the budget. Add unit tests
+  (records, builder, budgets), update README ("Known gaps"/field reference), tag v0.3.1.
+- Then in EBSCOnet (`~/scratch/EBSCOnet`, see its HANDOFF.md): bump the `requirements.txt` pin
+  and make `pipeline/folio_orders_adapter.py` honour `rules.use_expense_classes: false`. It
+  currently falls back to `default_expense_class` for a blank cell (line ~43), so a tenant
+  without classes still gets one put on the lines, or all POs go `invalid` if the default is
+  empty. README_API.md already claims "no class is put on the lines".
+
 ## Not done
 - `open-error` path exercised by unit tests only (see gotchas); the user will exercise
   budget / acquisition-unit / open-error behaviour on a real tenant later.
