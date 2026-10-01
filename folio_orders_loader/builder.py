@@ -55,6 +55,15 @@ def build_line(line, r):
         out["details"] = details
     if line.get("publisher"):
         out["publisher"] = line["publisher"]
+    if line.get("edition"):
+        out["edition"] = line["edition"]
+    if line.get("publication_date"):
+        out["publicationDate"] = str(line["publication_date"])
+    contributors = [{"contributor": c["name"],
+                     "contributorNameTypeId": r.contributor_name_type(c["type"])}
+                    for c in line.get("contributors") or []]
+    if contributors:
+        out["contributors"] = contributors
     if line.get("description"):
         out["poLineDescription"] = line["description"]
     if line.get("receipt_status"):

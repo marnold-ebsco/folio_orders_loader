@@ -68,6 +68,12 @@ true/yes/y/1. `product_ids[n].type` / `.value` build the line's product ID list.
 - `discount` with `discount_type` (`amount` default, or `percentage`), `additional_cost` and
   `exchange_rate` go on the cost block. `cost` stays the list unit price.
 
+### Bibliographic fields
+
+`edition` and `publication_date` (free text, sent as is). `contributors[n].name` and `.type`
+build the contributor list; `.type` must be a contributor name type name in the tenant (for
+example `Personal name`, `Corporate name`, `Meeting name`).
+
 A `translate` miss or an unparseable date is an **error**: `validate` fails and `load`
 refuses to run until it is fixed.
 

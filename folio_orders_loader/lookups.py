@@ -64,6 +64,10 @@ class Resolver:
     def material_type(self, name):
         return self._one("/material-types", "mtypes", "name==" + _q(name))["id"]
 
+    def contributor_name_type(self, name):
+        return self._one("/contributor-name-types", "contributorNameTypes",
+                         "name==" + _q(name))["id"]
+
     def identifier_type(self, name):
         return self._one("/identifier-types", "identifierTypes",
                          "name==" + _q(name))["id"]

@@ -24,6 +24,7 @@ REPEATING = {
     "product_ids": ("type", "value"),
     "fund_distribution": ("code", "expense_class_code", "value", "type"),
     "locations": ("code", "quantity_physical", "quantity_electronic"),
+    "contributors": ("name", "type"),
 }
 
 # Fields that must agree on every line of one PO.
@@ -157,6 +158,11 @@ def validate_line(line):
             problems.append(f"vendor_reference_type {ref_type!r} not in {REFERENCE_TYPES}")
     elif line.get("vendor_reference_type"):
         problems.append("vendor_reference_type given without vendor_reference_number")
+    for i, c in enumerate(line.get("contributors") or []):
+        if not c.get("name"):
+            problems.append(f"contributors[{i}]: missing name")
+        if not c.get("type"):
+            problems.append(f"contributors[{i}]: missing type")
     for key in ("bill_to", "ship_to"):
         if line.get(key) and not UUID_RE.match(str(line[key])):
             problems.append(f"{key} {line[key]!r} must be an address UUID")

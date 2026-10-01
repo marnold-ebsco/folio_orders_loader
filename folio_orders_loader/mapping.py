@@ -31,7 +31,8 @@ OPTIONAL = ("fund_code", "expense_class_code", "quantity_physical",
             "publisher", "cancellation_restriction", "access_provider_code",
             "location_code", "material_type", "description", "receipt_status",
             "vendor_account", "payment_status", "vendor_reference_number",
-            "vendor_reference_type", "notes", "tags", "bill_to", "ship_to")
+            "vendor_reference_type", "notes", "tags", "bill_to", "ship_to",
+            "edition", "publication_date")
 BOOLEAN = ("is_subscription", "manual_renewal", "cancellation_restriction")
 REPEATING_RE = re.compile(r"^(%s)\[(\d+)\]\.(\w+)$" % "|".join(REPEATING))
 MONEY = ("cost", "discount", "additional_cost", "fund_distribution.value")
