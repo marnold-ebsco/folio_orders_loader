@@ -35,7 +35,6 @@ PO_LEVEL = ("vendor_code", "order_type", "interval_days", "is_subscription",
             "acq_unit_names", "po_number_prefix", "po_number_suffix", "manual_po",
             "re_encumber", "assigned_to")
 LINE_FLAGS = (("automatic_export", "automaticExport"), ("collection", "collection"),
-              ("suppress_from_discovery", "suppressInstanceFromDiscovery"),
               ("multi_year_payment", "multiYearPayment"),
               ("claiming_active", "claimingActive"), ("is_package", "isPackage"))
 LINE_UUIDS = (("instance_id", "instanceId"), ("agreement_id", "agreementId"),
