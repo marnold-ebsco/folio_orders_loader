@@ -13,7 +13,7 @@ This file covers the loader package only. The EBSCOnet side (adapter, `ebsconet.
   (cli.py). The EBSCOnet adapter calls `check_budgets` itself on its dry run
   (`check_dry_run_budgets`, EBSCOnet 2026-10-01), so no loader change or release was needed.
   Library users calling `load()` directly still only see a budget problem at `--live`
-  (`budgetExpenseClassNotFound`). Possible follow-up: an opt-in `check_budget` option on `load()`.
+  (`budgetExpenseClassNotFound`). Released in v0.3.2: opt-in `check_budget=True` on `load()` runs check_budgets per PO (invalid on failure); default off. 95 tests pass.
 - Lookups (`lookups.py` Resolver) raise `LookupError_` for organization, fund, expense class,
   location and material type, which `loader.load` reports as `lookup-failed`.
 

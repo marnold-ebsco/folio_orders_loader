@@ -1,6 +1,7 @@
 """Load grouped PO records: skip existing POs, dry run unless live."""
 import json
 
+from .budgets import check_budgets
 from .builder import build_order
 from .lookups import LookupError_, Resolver
 from .records import group_by_po
@@ -33,12 +34,14 @@ def error_message(exc):
     return " ".join(text.split())[:500]
 
 
-def load(client, lines, live=False, open_orders=False):
+def load(client, lines, live=False, open_orders=False, check_budget=False):
     """Load line records. Returns a list of (po_number, status, detail).
 
     Status is one of: invalid, exists, lookup-failed, dry-run, created, opened,
     open-error, error. With open_orders (live only) each created PO is then set
     to Open; a failure leaves it Pending and reports open-error.
+    With check_budget, each PO's fund / expense class pairs are checked for an
+    Active budget first (as 'validate' does); a failure reports invalid.
     Re-running is safe: POs that already exist are skipped.
     """
     resolver = Resolver(client)
@@ -56,6 +59,11 @@ def load(client, lines, live=False, open_orders=False):
         except LookupError_ as exc:
             results.append((po, "lookup-failed", str(exc)))
             continue
+        if check_budget:
+            budget_errors = check_budgets(group, resolver)
+            if budget_errors:
+                results.append((po, "invalid", "; ".join(budget_errors)))
+                continue
         if not live:
             results.append((po, "dry-run", f"{len(group)} line(s)"))
             continue

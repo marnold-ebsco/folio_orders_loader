@@ -177,3 +177,22 @@ def test_blank_expense_class_omits_expense_class_id():
     dist = order["compositePoLines"][0]["fundDistribution"][0]
     assert "expenseClassId" not in dist
     assert dist["code"] == "F"
+
+
+def test_load_check_budget_reports_invalid_and_skips_post(monkeypatch):
+    from folio_orders_loader import loader
+    client = FakeClient()
+    monkeypatch.setattr(loader, "check_budgets",
+                        lambda group, r: ["fund F has no Active budget"])
+    res = load(client, [line()], live=True, check_budget=True)
+    assert res[0][1] == "invalid" and "no Active budget" in res[0][2]
+    assert not client.posted
+    res = load(client, [line()], live=True)
+    assert res[0][1] == "created"
+
+
+def test_load_check_budget_passes_when_no_errors(monkeypatch):
+    from folio_orders_loader import loader
+    monkeypatch.setattr(loader, "check_budgets", lambda group, r: [])
+    res = load(FakeClient(), [line()], check_budget=True)
+    assert res[0][1] == "dry-run"
