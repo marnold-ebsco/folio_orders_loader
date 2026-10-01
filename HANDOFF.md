@@ -258,20 +258,23 @@ Bugfest was back up. Scratch map/data lived in the session scratchpad; every tes
   mapping.py and README (commit 4817f69, pushed). 90 tests pass, flake8 clean.
 
 ### Not fully verified / still to do
-- **Acquisition units**: the name lookup (`acq_unit_names`) resolves, but the PO was refused
-  (`userNotAMemberOfTheAcq`) because the user was not in the "Law" unit. **The user is now part
-  of the Law acquisitions unit, so re-run this check**: load a PO with `acq_unit_names` = Law,
-  export, confirm `acqUnitIds`, delete.
-- `po_number_prefix`: the prefix "KS" does not exist on the tenant (`prefixNotFound`, a clean
-  error). Retry with a prefix that exists; `po_number_suffix`, `manual_po`, `re_encumber`,
-  `assigned_to` not exercised.
+- **Acquisition units**: VERIFIED LIVE 2026-10-01. `acq_unit_names` = Law loaded, export shows
+  `acqUnitIds` = 9bfe4e3a-4f69-4fcd-b83a-46bf580cd162; test PO deleted.
+- VERIFIED LIVE 2026-10-01 (test POs deleted): `po_number_prefix` (tenant has abc, pre1..3...),
+  `po_number_suffix` (test, suf1..3), `manual_po`, `re_encumber`, `assigned_to` (user UUID),
+  receipt_status Awaiting Receipt, payment_status Awaiting Payment, `exchange_rate` 1.1 on EUR.
+  `--open` with a 99,999,999 PO on TEST-ELEC opened fine (bugfest allows overspend), so the
+  `open-error` path could not be triggered live; covered by unit tests only.
+  An electronic line with quantity and NO location loaded without error (the
+  `electronicLocCostQtyMismatch` only fires when locations are present but mismatch), so no
+  extra validate rule is needed.
+  Cleanup note: reset an Open PO to Pending with a PUT (script in session /tmp/au/reset.py).
+- `po_number_prefix` "KS" does not exist on the tenant (`prefixNotFound`, a clean error).
 - `package_po_line_id`, `instance_id`, `agreement_id` (need real UUIDs) and
   `donor_organization_codes` not exercised.
-- Receipt status other than Pending, payment status other than Pending, and
-  `exchange_rate` not exercised.
-- Over-budget / budget checks and `--open` failure path (open-error) not exercised.
-- Electronic lines with a quantity need a location (`electronicLocCostQtyMismatch` otherwise);
-  consider a validate rule that flags quantity without a matching location.
+- VERIFIED LIVE 2026-10-01 (test PO deleted): `donor_organization_codes` (SRACS), `instance_id`,
+  `agreement_id` (E-Book-Pick), `package_po_line_id`; all exported with the expected values.
+- Still unexercised: `open-error` live (see above).
 - EBSCOnet adapter live re-run with the new loader fields: DONE 2026-10-01. 140/140 POs created,
   0 errors (one transient `RemoteProtocolError`, retried automatically), about 10 minutes.
   Spot-checked M2822798 by API export (Ongoing, 365-day interval, TEST-ELEC, publisher,
@@ -283,3 +286,6 @@ Bugfest was back up. Scratch map/data lived in the session scratchpad; every tes
 - Open question carried over: whether `out/three_type_test/*.xlsx` hold synthetic or
   real-derived orders (PO numbers look real, e.g. M2822798).
 
+
+## Release (2026-10-01)
+v0.3.0 tagged and pushed; EBSCOnet requirements.txt pin bumped to @v0.3.0. Only open-error live remains unexercised.
