@@ -1,5 +1,5 @@
 """Build a composite-order payload from grouped line records."""
-from .records import fund_list, location_list, quantities
+from .records import LINE_FLAGS, LINE_UUIDS, fund_list, location_list, quantities
 
 
 def build_line(line, r):
@@ -81,6 +81,19 @@ def build_line(line, r):
     for key, field in (("requester", "requester"), ("selector", "selector")):
         if line.get(key):
             out[field] = str(line[key])
+    for key, field in LINE_FLAGS:
+        if line.get(key):
+            out[field] = True
+    for key, field in LINE_UUIDS:
+        if line.get(key):
+            out[field] = line[key]
+    if line.get("claiming_interval") not in (None, ""):
+        out["claimingInterval"] = int(float(line["claiming_interval"]))
+    if line.get("donor"):
+        out["donor"] = line["donor"]
+    donors = [r.organization(c) for c in as_list(line.get("donor_organization_codes"))]
+    if donors:
+        out["donorOrganizationIds"] = donors
     if line.get("rush"):
         out["rush"] = True
     for key, field in (("renewal_note", "renewalNote"),

@@ -148,7 +148,7 @@ https://github.com/folio-org/acq-models mod-orders-storage/schemas/po_line.json)
 4. **Electronic extras**: CODED and COMMITTED locally (not pushed/tagged), 54 tests pass, flake8 clean, README updated. Neutral keys: resource_url, user_limit, trial, volumes (| list), material_supplier_code (org code), expected_receipt_date, receiving_note, is_acknowledged, subscription_interval, receipt_date, renewal_note, cancellation_restriction_note, product_ids[n].qualifier. Dates sent as T00:00:00.000+00:00. LIVE CHECK PENDING (groups 1-4 all unchecked live; then bump v0.3.0, tag, push, update EBSCOnet pin). Original list: eresource.resourceUrl, userLimit, trial; physical volumes,
    materialSupplier, expectedReceiptDate; details receivingNote, isAcknowledged,
    subscriptionInterval, productIds qualifier; receiptDate; renewalNote, cancellationRestrictionNote.
-5. **Maybe** (NEXT): donor/donorOrganizationIds, paymentTerms, multiYearPayment, claiming*, automaticExport,
+5. **Maybe**: CODED and COMMITTED locally (57 tests, README updated; live check pending): automatic_export, collection, suppress_from_discovery, multi_year_payment, claiming_active, is_package, claiming_interval, donor, donor_organization_codes, instance_id, agreement_id, package_po_line_id. NOT built: paymentTerms, customFields, claims. Original list: donor/donorOrganizationIds, paymentTerms, multiYearPayment, claiming*, automaticExport,
    collection, suppressInstanceFromDiscovery, instanceId, agreementId, isPackage/packagePoLineId,
    customFields. Skip system fields (id, metadata, poLineNumber, purchaseOrderId, searchLocationIds,
    lastExport, lastEDIExportDate).

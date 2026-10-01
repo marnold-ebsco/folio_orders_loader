@@ -88,6 +88,14 @@ Electronic lines: `resource_url`, `user_limit` (text), `trial` (boolean). Physic
 `cancellation_restriction_note`, and `product_ids[n].qualifier`. The two date fields accept
 `date_format` and are sent as midnight UTC date-times.
 
+### Other line flags and links
+
+Booleans: `automatic_export`, `collection`, `suppress_from_discovery`, `multi_year_payment`,
+`claiming_active`, `is_package`. `claiming_interval` (days), `donor` (text),
+`donor_organization_codes` (`|`-separated organization codes), and the UUIDs `instance_id`,
+`agreement_id`, `package_po_line_id` (not looked up). Payment terms and custom fields are not
+supported.
+
 A `translate` miss or an unparseable date is an **error**: `validate` fails and `load`
 refuses to run until it is fixed.
 

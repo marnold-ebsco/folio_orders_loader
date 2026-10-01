@@ -30,6 +30,12 @@ REPEATING = {
 # Fields that must agree on every line of one PO.
 PO_LEVEL = ("vendor_code", "order_type", "interval_days", "is_subscription",
             "manual_renewal", "renewal_date", "notes", "tags", "bill_to", "ship_to")
+LINE_FLAGS = (("automatic_export", "automaticExport"), ("collection", "collection"),
+              ("suppress_from_discovery", "suppressInstanceFromDiscovery"),
+              ("multi_year_payment", "multiYearPayment"),
+              ("claiming_active", "claimingActive"), ("is_package", "isPackage"))
+LINE_UUIDS = (("instance_id", "instanceId"), ("agreement_id", "agreementId"),
+              ("package_po_line_id", "packagePoLineId"))
 UUID_RE = re.compile(r"^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$", re.I)
 
 
@@ -167,7 +173,11 @@ def validate_line(line):
             problems.append(f"contributors[{i}]: missing name")
         if not c.get("type"):
             problems.append(f"contributors[{i}]: missing type")
-    for key in ("bill_to", "ship_to"):
+    if line.get("claiming_interval") not in (None, ""):
+        n = _number(line["claiming_interval"])
+        if n is None or n < 0 or n != int(n):
+            problems.append("claiming_interval must be a whole number of days")
+    for key in ("bill_to", "ship_to") + tuple(k for k, _ in LINE_UUIDS):
         if line.get(key) and not UUID_RE.match(str(line[key])):
             problems.append(f"{key} {line[key]!r} must be an address UUID")
     fmt = line.get("order_format")

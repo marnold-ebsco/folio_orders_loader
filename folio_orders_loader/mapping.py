@@ -36,9 +36,15 @@ OPTIONAL = ("fund_code", "expense_class_code", "quantity_physical",
             "selector", "rush", "resource_url", "user_limit", "trial",
             "volumes", "material_supplier_code", "expected_receipt_date",
             "receiving_note", "is_acknowledged", "subscription_interval",
-            "receipt_date", "renewal_note", "cancellation_restriction_note")
+            "receipt_date", "renewal_note", "cancellation_restriction_note",
+            "automatic_export", "collection", "suppress_from_discovery",
+            "multi_year_payment", "claiming_active", "is_package",
+            "claiming_interval", "donor", "donor_organization_codes",
+            "instance_id", "agreement_id", "package_po_line_id")
 BOOLEAN = ("is_subscription", "manual_renewal", "cancellation_restriction",
-           "rush", "trial", "is_acknowledged")
+           "rush", "trial", "is_acknowledged", "automatic_export",
+           "collection", "suppress_from_discovery", "multi_year_payment",
+           "claiming_active", "is_package")
 REPEATING_RE = re.compile(r"^(%s)\[(\d+)\]\.(\w+)$" % "|".join(REPEATING))
 MONEY = ("cost", "discount", "additional_cost", "fund_distribution.value")
 ROW_KEYS = ("folio_field", "legacy_field", "value", "description",
